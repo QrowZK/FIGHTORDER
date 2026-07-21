@@ -12,6 +12,14 @@ $wgMetaNamespace = "FIGHTORDER";
 
 $wgServer = "__WG_SERVER__";
 
+// MediaWiki is installed at the docroot root, so scripts (index.php,
+// load.php) live at "/". Must be set explicitly: $wgScriptPath otherwise
+// defaults to "/wiki", which makes MediaWiki emit resource URLs like
+// /wiki/load.php — those then get caught by the /wiki/ rewrite in
+// .htaccess and routed to index.php, so every stylesheet returns HTML
+// instead of CSS and the wiki renders completely unstyled.
+$wgScriptPath = "";
+
 $wgResourceBasePath = $wgScriptPath;
 $wgArticlePath = "/wiki/$1";
 $wgUsePathInfo = true;
