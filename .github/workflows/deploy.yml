@@ -79,6 +79,26 @@ jobs:
             -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
             build/ "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/"
 
+      - name: Diagnose - what DB is actually being connected to
+        if: ${{ github.event.inputs.run_install == 'true' }}
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          WG_DB_HOST: ${{ secrets.WG_DB_HOST }}
+          WG_DB_NAME: ${{ secrets.WG_DB_NAME }}
+          WG_DB_USER: ${{ secrets.WG_DB_USER }}
+          WG_DB_PASSWORD: ${{ secrets.WG_DB_PASSWORD }}
+        run: |
+          echo "Resolved secret lengths (to catch stray whitespace, not values):"
+          echo "WG_DB_HOST length: ${#WG_DB_HOST}"
+          echo "WG_DB_NAME length: ${#WG_DB_NAME}"
+          echo "WG_DB_USER length: ${#WG_DB_USER}"
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" \
+            "mysql -h '${WG_DB_HOST}' -u '${WG_DB_USER}' -p'${WG_DB_PASSWORD}' '${WG_DB_NAME}' -e 'SELECT DATABASE(); SHOW TABLES;'"
+
       - name: Run update.php + create admin (first-time only)
         if: ${{ github.event.inputs.run_install == 'true' }}
         env:
