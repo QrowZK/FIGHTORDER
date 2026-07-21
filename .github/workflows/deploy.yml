@@ -87,21 +87,29 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           WG_SITE_NAME: ${{ vars.WG_SITE_NAME || 'FIGHTORDER' }}
+          WG_SERVER: ${{ vars.WG_SERVER || 'https://fightorder.net' }}
+          WG_DB_HOST: ${{ secrets.WG_DB_HOST }}
+          WG_DB_NAME: ${{ secrets.WG_DB_NAME }}
+          WG_DB_USER: ${{ secrets.WG_DB_USER }}
+          WG_DB_PASSWORD: ${{ secrets.WG_DB_PASSWORD }}
           WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
           WG_ADMIN_PASSWORD: ${{ secrets.WG_ADMIN_PASSWORD }}
         run: |
+          # --confpath points at a scratch dir: install.php always writes a
+          # LocalSettings.php of its own, and we don't want it clobbering the
+          # one we already rsynced from config/LocalSettings.template.php.
           sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
             "${SSH_USER}@${SSH_HOST}" \
-            "cd '${DEPLOY_PATH}' && php maintenance/run.php install \
-              --dbserver=\$(php -r 'require \"LocalSettings.php\"; echo \$wgDBserver;') \
-              --confpath=. \
-              --dbname=\$(php -r 'require \"LocalSettings.php\"; echo \$wgDBname;') \
-              --dbuser=\$(php -r 'require \"LocalSettings.php\"; echo \$wgDBuser;') \
-              --dbpass=\$(php -r 'require \"LocalSettings.php\"; echo \$wgDBpassword;') \
-              --server=\$(php -r 'require \"LocalSettings.php\"; echo \$wgServer;') \
+            "cd '${DEPLOY_PATH}' && mkdir -p /tmp/mw-install-scratch && php maintenance/run.php install \
+              --dbserver='${WG_DB_HOST}' \
+              --dbname='${WG_DB_NAME}' \
+              --dbuser='${WG_DB_USER}' \
+              --dbpass='${WG_DB_PASSWORD}' \
+              --server='${WG_SERVER}' \
               --scriptpath= \
+              --confpath=/tmp/mw-install-scratch \
               --pass='${WG_ADMIN_PASSWORD}' \
-              '${WG_SITE_NAME}' '${WG_ADMIN_USER}' --overwrite=false || true"
+              '${WG_SITE_NAME}' '${WG_ADMIN_USER}'"
 
       - name: Run update.php (routine deploys)
         if: ${{ github.event.inputs.run_install != 'true' }}
