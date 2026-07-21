@@ -14,6 +14,12 @@ on:
         required: false
         default: "false"
 
+# Serialise deploys so a manual (import/install) run never races a push run's
+# rsync to the same server. Runs queue instead of overlapping.
+concurrency:
+  group: deploy-dreamhost
+  cancel-in-progress: false
+
 env:
   MEDIAWIKI_VERSION: "1.43.1"
   # Citizen skin release tag (without leading "v"). Requires MediaWiki >= 1.43.0.
