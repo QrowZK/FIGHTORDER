@@ -1,0 +1,13 @@
+# FIGHTORDER wiki — Apache rewrite rules for MediaWiki short URLs.
+# Articles live at /wiki/Page_Name; these rules route those requests to
+# MediaWiki's index.php entry point. Without this, /wiki/... 404s because
+# no file actually exists at that path.
+# Reference: https://www.mediawiki.org/wiki/Manual:Short_URL/Apache
+
+RewriteEngine On
+
+# Route /wiki and /wiki/... to MediaWiki.
+RewriteRule ^/?wiki(/.*)?$ %{DOCUMENT_ROOT}/index.php [L]
+
+# Send the bare domain root to MediaWiki (which redirects to the Main Page).
+RewriteRule ^/*$ %{DOCUMENT_ROOT}/index.php [L]
