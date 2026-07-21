@@ -60,9 +60,17 @@ $wgSecretKey = "__WG_SECRET_KEY__";
 
 $wgAuthenticationTokenVersion = "1";
 
-$wgDefaultSkin = "vector-2022";
+$wgDefaultSkin = "citizen";
 
+// Citizen is the themed skin the site is built around (downloaded into
+// skins/Citizen by the deploy workflow). Vector is kept loaded as a
+// fallback users can still select via preferences.
+wfLoadSkin( 'Citizen' );
 wfLoadSkin( 'Vector' );
+
+// --- Citizen configuration -------------------------------------------------
+// Config prefix is wgCitizen; see skin.json for the full list of options.
+$wgCitizenThemeDefault = "auto";   // auto | light | dark (follows the visitor's OS preference)
 
 $wgGroupPermissions['*']['edit'] = false;
 $wgGroupPermissions['*']['createaccount'] = true;

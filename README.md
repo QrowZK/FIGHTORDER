@@ -13,9 +13,17 @@ through this repo and GitHub Actions.
 - `.github/workflows/deploy.yml` — on every push to `main`:
   1. downloads MediaWiki (version pinned by `MEDIAWIKI_VERSION` in the
      workflow),
-  2. renders `LocalSettings.php` from the template using GitHub secrets,
-  3. rsyncs the build to the DreamHost docroot over SSH (password auth),
-  4. runs `maintenance/run.php update` to apply any schema changes.
+  2. downloads the Citizen skin (pinned by `CITIZEN_VERSION`) into
+     `skins/Citizen`,
+  3. renders `LocalSettings.php` from the template using GitHub secrets,
+  4. rsyncs the build to the DreamHost docroot over SSH (password auth),
+     preserving server-side `images/` uploads and `cache/`,
+  5. runs `maintenance/run.php update` to apply any schema changes.
+
+The active skin is **Citizen** (`$wgDefaultSkin = "citizen"`), the theme
+the site is built around; Vector stays loaded as a selectable fallback.
+To bump the skin, change `CITIZEN_VERSION` in the workflow and push —
+check the target tag's `skin.json` still declares `MediaWiki >= 1.43`.
 
 Manually running the workflow (Actions tab → **Run workflow**) with
 `run_install = true` instead runs `maintenance/run.php install` — use this

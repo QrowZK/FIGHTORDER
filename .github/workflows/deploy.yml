@@ -12,6 +12,8 @@ on:
 
 env:
   MEDIAWIKI_VERSION: "1.43.1"
+  # Citizen skin release tag (without leading "v"). Requires MediaWiki >= 1.43.0.
+  CITIZEN_VERSION: "3.18.0"
 
 jobs:
   deploy:
@@ -39,6 +41,16 @@ jobs:
             "https://releases.wikimedia.org/mediawiki/${MEDIAWIKI_VERSION%.*}/mediawiki-${MEDIAWIKI_VERSION}.tar.gz"
           mkdir build
           tar -xzf mediawiki.tar.gz -C build --strip-components=1
+
+      - name: Download Citizen skin
+        run: |
+          # Citizen ships its assets prebuilt and compiles its LESS via
+          # ResourceLoader at runtime, so no npm/composer build is needed.
+          curl -fLo citizen.tar.gz \
+            "https://github.com/StarCitizenTools/mediawiki-skins-Citizen/archive/refs/tags/v${CITIZEN_VERSION}.tar.gz"
+          mkdir -p build/skins/Citizen
+          tar -xzf citizen.tar.gz -C build/skins/Citizen --strip-components=1
+          test -f build/skins/Citizen/skin.json  # fail loudly if the layout changed
 
       - name: Render LocalSettings.php from template
         env:
@@ -75,7 +87,15 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
+          # --delete keeps the server a mirror of build/, but user uploads
+          # (images/) and the runtime file cache (cache/) live only on the
+          # server and must survive deploys — exclude them from the sync so
+          # they're never deleted or overwritten. LocalSettings.php.deployed
+          # is a transient artifact from the first-install step.
           sshpass -e rsync -az --delete \
+            --exclude='/images/' \
+            --exclude='/cache/' \
+            --exclude='LocalSettings.php.deployed' \
             -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
             build/ "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/"
 
