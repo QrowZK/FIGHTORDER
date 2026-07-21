@@ -79,48 +79,46 @@ jobs:
             -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
             build/ "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/"
 
-      - name: Diagnose - what DB is actually being connected to
+      - name: Run install.php against fresh DB, then restore our config (first-time only)
         if: ${{ github.event.inputs.run_install == 'true' }}
         env:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          WG_SITE_NAME: ${{ vars.WG_SITE_NAME || 'FIGHTORDER' }}
+          WG_SERVER: ${{ vars.WG_SERVER || 'https://fightorder.net' }}
           WG_DB_HOST: ${{ secrets.WG_DB_HOST }}
           WG_DB_NAME: ${{ secrets.WG_DB_NAME }}
           WG_DB_USER: ${{ secrets.WG_DB_USER }}
           WG_DB_PASSWORD: ${{ secrets.WG_DB_PASSWORD }}
-        run: |
-          echo "Resolved secret lengths (to catch stray whitespace, not values):"
-          echo "WG_DB_HOST length: ${#WG_DB_HOST}"
-          echo "WG_DB_NAME length: ${#WG_DB_NAME}"
-          echo "WG_DB_USER length: ${#WG_DB_USER}"
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
-            "${SSH_USER}@${SSH_HOST}" \
-            "mysql -h '${WG_DB_HOST}' -u '${WG_DB_USER}' -p'${WG_DB_PASSWORD}' '${WG_DB_NAME}' -e 'SELECT DATABASE(); SHOW TABLES;'"
-
-      - name: Run update.php + create admin (first-time only)
-        if: ${{ github.event.inputs.run_install == 'true' }}
-        env:
-          SSHPASS: ${{ secrets.SSH_PASSWORD }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
           WG_ADMIN_PASSWORD: ${{ secrets.WG_ADMIN_PASSWORD }}
         run: |
-          # We already deployed a real LocalSettings.php (rsync step above),
-          # so install.php refuses to run (it detects an existing config and
-          # bails to avoid clobbering a live site). update.php is the right
-          # tool here: pointed at an empty DB it creates every table from
-          # scratch, same as install.php would, using the config we already
-          # have. It just doesn't create a user, so createAndPromote.php
-          # makes the initial admin account afterwards.
+          # update.php's compat check assumes the `revision` table already
+          # exists (it fatal-errors on ANY database missing rev_actor,
+          # including a brand new empty one) — so it can't create the
+          # initial schema. install.php can, but refuses to run once a
+          # LocalSettings.php is already present. So: move our deployed
+          # config aside, let install.php build the schema + admin account
+          # using its own throwaway config, then put our real config back.
           sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
             "${SSH_USER}@${SSH_HOST}" \
-            "cd '${DEPLOY_PATH}' && php maintenance/run.php update --quick && \
-             php maintenance/run.php createAndPromote --force --sysop --custom-groups=bureaucrat \
-               '${WG_ADMIN_USER}' '${WG_ADMIN_PASSWORD}'"
+            "cd '${DEPLOY_PATH}' && \
+             mv LocalSettings.php LocalSettings.php.deployed && \
+             mkdir -p /tmp/mw-install-scratch && \
+             php maintenance/run.php install \
+               --dbserver='${WG_DB_HOST}' \
+               --dbname='${WG_DB_NAME}' \
+               --dbuser='${WG_DB_USER}' \
+               --dbpass='${WG_DB_PASSWORD}' \
+               --server='${WG_SERVER}' \
+               --scriptpath= \
+               --confpath=/tmp/mw-install-scratch \
+               --pass='${WG_ADMIN_PASSWORD}' \
+               '${WG_SITE_NAME}' '${WG_ADMIN_USER}'; \
+             mv LocalSettings.php.deployed LocalSettings.php && \
+             php maintenance/run.php update --quick"
 
       - name: Run update.php (routine deploys)
         if: ${{ github.event.inputs.run_install != 'true' }}
