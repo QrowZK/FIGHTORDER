@@ -80,7 +80,7 @@
 .fo-btn--s:hover{border-color:var(--fo-purple-500);box-shadow:var(--glow-sm);color:var(--fo-text);text-decoration:none}
 
 /* Stat strip */
-.fo-stat{display:flex;gap:26px;flex-wrap:wrap;font-family:var(--font-mono);margin-top:26px;padding-top:20px;border-top:1px solid var(--fo-line)}
+.fo-stat{display:flex;gap:26px;flex-wrap:wrap;font-family:var(--font-body);margin-top:26px;padding-top:20px;border-top:1px solid var(--fo-line)}
 .fo-stat b{display:block;font-size:1.5rem;color:var(--fo-glow);text-shadow:var(--glow-text);font-weight:600}
 .fo-stat span{font-size:.68rem;color:var(--fo-text-dim);letter-spacing:.1em;text-transform:uppercase}
 
@@ -91,7 +91,7 @@
 .fo-rule{height:1px;background:var(--hairline-purple);margin:10px 0 20px;border:0}
 
 /* Portal card grid */
-.fo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.fo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .fo-card{position:relative;background:var(--fo-panel);border:1px solid var(--fo-line);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-card);transition:all var(--dur) var(--ease-out)}
 .fo-card:hover{border-color:var(--fo-purple-500);box-shadow:var(--glow-md)}
 .fo-card-ic{width:38px;height:38px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;background:var(--fo-purple-900);color:var(--fo-glow);margin-bottom:12px}
@@ -102,8 +102,6 @@
 .fo-card-h a::after{content:"";position:absolute;inset:0;z-index:1}
 .fo-card-h a:hover{text-decoration:none;color:var(--fo-glow)!important}
 .fo-card-p{margin:0;font-size:.85rem;color:var(--fo-text-muted);line-height:1.5}
-.fo-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;position:relative;z-index:2}
-.fo-tag{font-family:var(--font-mono);font-size:.66rem;font-weight:600;padding:3px 9px;border-radius:var(--radius-pill);background:var(--fo-purple-900);color:var(--fo-glow);border:1px solid var(--fo-purple-700)}
 
 /* Two-column: featured + recent */
 .fo-two{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-top:40px}

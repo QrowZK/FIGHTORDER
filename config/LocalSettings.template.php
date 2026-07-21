@@ -68,6 +68,11 @@ $wgDefaultSkin = "citizen";
 wfLoadSkin( 'Citizen' );
 wfLoadSkin( 'Vector' );
 
+// --- Extensions ------------------------------------------------------------
+// DynamicPageList3 powers the live Recent-changes list on the Main Page via
+// {{#dpl:}} (downloaded into extensions/DynamicPageList3 by the workflow).
+wfLoadExtension( 'DynamicPageList3' );
+
 // --- Citizen configuration -------------------------------------------------
 // Config prefix is wgCitizen; see skin.json for the full list of options.
 $wgCitizenThemeDefault = "dark";     // the brand is dark-first (purple glow on black)

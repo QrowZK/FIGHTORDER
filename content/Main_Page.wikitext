@@ -1,33 +1,14 @@
 <!-- FIGHTORDER main page. Managed in the repo at content/Main_Page.wikitext and
      deployed via GitHub Actions (workflow_dispatch -> import_content=true).
      In-wiki edits to this page are overwritten on the next content import.
-     Styling lives in MediaWiki:Common.css (.fo-* classes). -->
+     Styling lives in MediaWiki:Common.css (.fo-* classes). The Recent changes
+     list is generated live by the DynamicPageList3 extension ({{#dpl:}}). -->
 <div class="fo-main">
 <div class="fo-hero">
-<h1>The Fightorder Wiki</h1>
+<h1>FIGHTORDER</h1>
 <p>The community knowledge base for the <strong>Spring RTS</strong> and <strong>Recoil</strong> engines and the games built on them — commands, units, mechanics, maps, and modding.</p>
-<div class="fo-cta"><span class="fo-btn fo-btn--p"><span class="fo-ic fo-ic--rocket"></span>[[Getting Started]]</span><span class="fo-btn fo-btn--s"><span class="fo-ic fo-ic--list"></span>[[Special:AllPages|Browse all pages]]</span></div>
+<div class="fo-cta"><span class="fo-btn fo-btn--s"><span class="fo-ic fo-ic--list"></span>[[Special:AllPages|Browse all pages]]</span></div>
 <div class="fo-stat"><div><b>{{NUMBEROFARTICLES}}</b><span>Articles</span></div><div><b>{{NUMBEROFEDITS}}</b><span>Edits</span></div><div><b>{{NUMBEROFACTIVEUSERS}}</b><span>Editors</span></div></div>
-</div>
-<div class="fo-sec">
-<div class="fo-sec-h"><span class="fo-ic fo-ic--compass"></span>Explore</div>
-<hr class="fo-rule">
-<div class="fo-grid">
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--swords"></span></div><div class="fo-card-h">[[Commands]]</div><p class="fo-card-p">Fight, Guard, Patrol, Repair, Reclaim — every order and its hotkey.</p><div class="fo-tags"><span class="fo-tag">Fight</span><span class="fo-tag">Guard</span><span class="fo-tag">D-gun</span></div></div>
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--box"></span></div><div class="fo-card-h">[[Units]]</div><p class="fo-card-p">Commanders, constructors, and combat units across every faction.</p><div class="fo-tags"><span class="fo-tag">Com</span><span class="fo-tag">Eco</span></div></div>
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--map"></span></div><div class="fo-card-h">[[Maps]]</div><p class="fo-card-p">Terrain, metal spots, and start positions for competitive play.</p><div class="fo-tags"><span class="fo-tag">1v1</span><span class="fo-tag">FFA</span></div></div>
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--gamepad-2"></span></div><div class="fo-card-h">[[Games]]</div><p class="fo-card-p">Zero-K, Beyond All Reason, and other engine derivatives.</p><div class="fo-tags"><span class="fo-tag">Zero-K</span><span class="fo-tag">BAR</span></div></div>
-</div>
-</div>
-<div class="fo-sec">
-<div class="fo-sec-h"><span class="fo-ic fo-ic--cpu"></span>Engines</div>
-<hr class="fo-rule">
-<div class="fo-grid">
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--cpu"></span></div><div class="fo-card-h">[[Recoil Engine]]</div><p class="fo-card-p">The actively-developed fork powering Beyond All Reason and modern titles.</p><div class="fo-tags"><span class="fo-tag">Active</span><span class="fo-tag">Lua</span></div></div>
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--git-branch"></span></div><div class="fo-card-h">[[Spring RTS]]</div><p class="fo-card-p">The original engine and the heritage the wiki is preserving.</p><div class="fo-tags"><span class="fo-tag">Legacy</span><span class="fo-tag">Archive</span></div></div>
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--terminal"></span></div><div class="fo-card-h">[[Lua API]]</div><p class="fo-card-p">Synced, unsynced, and gadget/widget entry points for modders.</p><div class="fo-tags"><span class="fo-tag">Synced</span><span class="fo-tag">Gadgets</span></div></div>
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--wrench"></span></div><div class="fo-card-h">[[Modding]]</div><p class="fo-card-p">Building games on the engine — content, balance, and packaging.</p><div class="fo-tags"><span class="fo-tag">Games</span><span class="fo-tag">Widgets</span></div></div>
-</div>
 </div>
 <div class="fo-two">
 <div class="fo-panel">
@@ -38,11 +19,34 @@
 </div>
 <div class="fo-panel">
 <div class="fo-panel-h"><span class="fo-ic fo-ic--history"></span>Recent changes</div>
-<div class="fo-upd"><span class="fo-upd-t">wiki</span><div>Every edit shows up here as the wiki grows. This section is currently a static seed.</div></div>
-<div class="fo-upd"><span class="fo-upd-t">seed</span><div>[[Fight]] — write the flagship command article</div></div>
-<div class="fo-upd"><span class="fo-upd-t">seed</span><div>[[Recoil Engine]] — port the engine overview from Spring</div></div>
-<div class="fo-upd"><span class="fo-upd-t">seed</span><div>[[Lua API]] — Spring.GiveOrder and friends</div></div>
+{{#dpl:
+|namespace=Main
+|ordermethod=lastedit
+|order=descending
+|count=7
+|mode=userformat
+|noresultsheader=<div class="fo-upd"><span class="fo-upd-t">wiki</span><div>No edits yet — start writing the wiki!</div></div>
+|listseparators=,<div class="fo-upd"><span class="fo-upd-t">edit</span><div>,</div></div>,
+}}
 <span class="fo-more">[[Special:RecentChanges|→ See all recent changes]]</span>
+</div>
+</div>
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--gamepad-2"></span>Games</div>
+<hr class="fo-rule">
+<div class="fo-grid">
+<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--gamepad-2"></span></div><div class="fo-card-h">[[Zero-K]]</div><p class="fo-card-p">Open-source RTS with physics projectiles, no unit build limits, and deep commander customization.</p></div>
+<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--swords"></span></div><div class="fo-card-h">[[Beyond All Reason]]</div><p class="fo-card-p">BAR — large-scale modern RTS on the Recoil engine, free and community-driven.</p></div>
+<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--box"></span></div><div class="fo-card-h">[[NOTA]]</div><p class="fo-card-p">None Of The Above — a tightly-balanced annihilation-style total conversion.</p></div>
+<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--terminal"></span></div><div class="fo-card-h">[[Kernel Panic]]</div><p class="fo-card-p">Minimalist computer-themed RTS — three sides, no economy, pure tactics.</p></div>
+</div>
+</div>
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--cpu"></span>Engines</div>
+<hr class="fo-rule">
+<div class="fo-grid">
+<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--cpu"></span></div><div class="fo-card-h">[[Recoil Engine]]</div><p class="fo-card-p">The actively-developed fork powering Beyond All Reason and modern titles.</p></div>
+<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--git-branch"></span></div><div class="fo-card-h">[[Spring RTS]]</div><p class="fo-card-p">The original engine and the heritage this wiki is preserving.</p></div>
 </div>
 </div>
 </div>

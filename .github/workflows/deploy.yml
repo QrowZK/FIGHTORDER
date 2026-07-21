@@ -24,6 +24,8 @@ env:
   MEDIAWIKI_VERSION: "1.43.1"
   # Citizen skin release tag (without leading "v"). Requires MediaWiki >= 1.43.0.
   CITIZEN_VERSION: "3.18.0"
+  # DynamicPageList3 branch (tracks a MediaWiki REL branch; REL1_43 needs >= 1.43.0).
+  DPL3_REF: "REL1_43"
 
 jobs:
   deploy:
@@ -61,6 +63,16 @@ jobs:
           mkdir -p build/skins/Citizen
           tar -xzf citizen.tar.gz -C build/skins/Citizen --strip-components=1
           test -f build/skins/Citizen/skin.json  # fail loudly if the layout changed
+
+      - name: Download DynamicPageList3 extension
+        run: |
+          # Powers the live "Recent changes" list on the Main Page ({{#dpl:}}).
+          # Ships ready to run — no composer/npm build needed.
+          curl -fLo dpl3.tar.gz \
+            "https://github.com/Universal-Omega/DynamicPageList3/archive/refs/heads/${DPL3_REF}.tar.gz"
+          mkdir -p build/extensions/DynamicPageList3
+          tar -xzf dpl3.tar.gz -C build/extensions/DynamicPageList3 --strip-components=1
+          test -f build/extensions/DynamicPageList3/extension.json
 
       - name: Render LocalSettings.php from template
         env:
