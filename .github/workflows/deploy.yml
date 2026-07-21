@@ -9,6 +9,10 @@ on:
         description: "Run install.php instead of update.php (first-time setup / fresh DB only)"
         required: false
         default: "false"
+      import_content:
+        description: "Import content/ into the wiki (Main Page + Common.css). Overwrites in-wiki edits to those pages."
+        required: false
+        default: "false"
 
 env:
   MEDIAWIKI_VERSION: "1.43.1"
@@ -151,3 +155,29 @@ jobs:
           sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
             "${SSH_USER}@${SSH_HOST}" \
             "cd '${DEPLOY_PATH}' && php maintenance/run.php update --quick"
+
+      - name: Import wiki content (opt-in)
+        if: ${{ github.event.inputs.import_content == 'true' }}
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
+        run: |
+          # Pipe each repo file into MediaWiki's edit.php over SSH stdin, as the
+          # admin user. Common.css needs the editsitecss right (granted to sysop
+          # in LocalSettings). These pages are repo-managed: importing overwrites
+          # whatever is currently in the wiki for them.
+          import_page () {
+            local title="$1" file="$2"
+            echo "Importing '$title' from $file ..."
+            sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+              "${SSH_USER}@${SSH_HOST}" \
+              "cd '${DEPLOY_PATH}' && php maintenance/run.php edit \
+                 --user '${WG_ADMIN_USER}' \
+                 --summary 'Deploy from repo (GitHub Actions)' \
+                 '${title}'" < "$file"
+          }
+          import_page "MediaWiki:Common.css" content/Common.css
+          import_page "Main Page"            content/Main_Page.wikitext

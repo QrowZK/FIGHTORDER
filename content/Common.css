@@ -1,0 +1,144 @@
+/* ============================================================================
+ * FIGHTORDER — sitewide theme (MediaWiki:Common.css)
+ * Purple-glow-on-black RTS-wiki aesthetic, layered over the Citizen skin.
+ * Managed in the repo at content/Common.css and deployed via GitHub Actions
+ * (workflow_dispatch -> import_content=true). Edits made here in-wiki will be
+ * overwritten on the next content import.
+ *
+ * Fonts (Michroma / Saira / JetBrains Mono) are loaded from Google Fonts as
+ * stand-ins per the design system; swap for self-hosted files if desired.
+ * ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Saira:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* --- Design tokens (ported from the Fightorder design system) ------------- */
+:root{
+  --fo-black:#07060b; --fo-void:#0b0a12; --fo-ink:#12101c;
+  --fo-panel:#181528; --fo-panel-2:#1f1b31;
+  --fo-line:#2b2542; --fo-line-strong:#3a3158;
+  --fo-purple-050:#f3ebff; --fo-purple-200:#d5b8ff; --fo-purple-400:#b98cff;
+  --fo-purple-500:#a855f7; --fo-purple-600:#9333ea; --fo-purple-700:#7322c7;
+  --fo-purple-900:#3d1266;
+  --fo-glow:#c084fc; --fo-glow-cyan:#67e8f9;
+  --fo-text:#ece9f5; --fo-text-muted:#a49cc4; --fo-text-dim:#6f688c;
+  --fo-text-on-purple:#faf6ff;
+  --fo-success:#4ade80; --fo-warning:#fbbf24; --fo-danger:#f87171;
+
+  --glow-sm:0 0 8px rgba(168,85,247,.45);
+  --glow-md:0 0 16px rgba(168,85,247,.55),0 0 2px rgba(192,132,252,.8);
+  --glow-lg:0 0 32px rgba(168,85,247,.6),0 0 8px rgba(192,132,252,.5);
+  --glow-text:0 0 12px rgba(192,132,252,.7);
+  --shadow-card:0 2px 4px rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.4);
+  --bg-bloom:radial-gradient(1200px 600px at 70% -10%,rgba(115,34,199,.28),transparent 60%),radial-gradient(800px 500px at 10% 110%,rgba(147,51,234,.18),transparent 55%),var(--fo-black);
+  --gradient-purple:linear-gradient(135deg,var(--fo-purple-600),var(--fo-purple-500) 55%,var(--fo-glow));
+  --hairline-purple:linear-gradient(90deg,transparent,var(--fo-purple-500),transparent);
+  --ease-out:cubic-bezier(.22,.61,.36,1); --dur:200ms;
+
+  --font-display:'Michroma',system-ui,sans-serif;
+  --font-body:'Saira','Bahnschrift',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --fs-hero:clamp(2.4rem,4.6vw,3.6rem); --fs-h2:1.6rem;
+  --radius-sm:6px; --radius-md:10px; --radius-lg:16px; --radius-pill:999px;
+  --container:1180px;
+}
+
+/* --- Nudge Citizen's accents toward the brand ---------------------------- */
+/* Citizen exposes these custom properties; recolour links/accents to purple. */
+:root .skin-citizen,
+:root{
+  --color-progressive:var(--fo-purple-500);
+  --color-progressive--hover:var(--fo-purple-400);
+  --color-progressive--active:var(--fo-purple-600);
+  --color-link:var(--fo-glow);
+  --color-link--hover:var(--fo-purple-400);
+}
+
+/* Content links across the wiki pick up the glow-violet. */
+.mw-body a:not(.fo-btn):not(.new){color:var(--fo-glow)}
+.mw-body a:not(.fo-btn):not(.new):hover{color:var(--fo-purple-400)}
+
+/* ==========================================================================
+ * Main Page components — all scoped under .fo-main so they never leak into
+ * ordinary articles or the skin chrome.
+ * ========================================================================== */
+.fo-main{font-family:var(--font-body);color:var(--fo-text);line-height:1.6;max-width:var(--container)}
+.fo-main :is(h1,h2,h3,h4){font-family:var(--font-display);letter-spacing:.02em;font-weight:400}
+
+/* Hero */
+.fo-hero{position:relative;border:1px solid var(--fo-line);border-radius:var(--radius-lg);padding:40px 36px;background:radial-gradient(600px 300px at 85% -20%,rgba(115,34,199,.35),transparent 60%),var(--fo-ink);overflow:hidden;box-shadow:var(--shadow-card)}
+.fo-hero h1{font-size:var(--fs-hero);line-height:1.1;margin:0 0 10px;text-shadow:var(--glow-text)}
+.fo-hero p{max-width:600px;color:var(--fo-text-muted);font-size:1.05rem;margin:0 0 22px}
+.fo-hero strong{color:var(--fo-text);font-weight:600}
+.fo-cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.fo-btn{position:relative;display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;padding:11px 20px;border-radius:var(--radius-md);border:1px solid transparent;transition:all var(--dur) var(--ease-out)}
+/* wikilinks can't take a class, so each button is a span wrapper and the
+   inner wikilink is stretched over it for full-button clickability. */
+.fo-btn a{color:inherit!important;text-decoration:none}
+.fo-btn a::after{content:"";position:absolute;inset:0;z-index:1}
+.fo-btn--p,a.fo-btn--p{background:var(--gradient-purple);color:var(--fo-text-on-purple);box-shadow:var(--glow-md)}
+.fo-btn--p:hover{box-shadow:var(--glow-lg);color:var(--fo-text-on-purple);text-decoration:none}
+.fo-btn--s,a.fo-btn--s{background:var(--fo-panel-2);color:var(--fo-text);border-color:var(--fo-line-strong)}
+.fo-btn--s:hover{border-color:var(--fo-purple-500);box-shadow:var(--glow-sm);color:var(--fo-text);text-decoration:none}
+
+/* Stat strip */
+.fo-stat{display:flex;gap:26px;flex-wrap:wrap;font-family:var(--font-mono);margin-top:26px;padding-top:20px;border-top:1px solid var(--fo-line)}
+.fo-stat b{display:block;font-size:1.5rem;color:var(--fo-glow);text-shadow:var(--glow-text);font-weight:600}
+.fo-stat span{font-size:.68rem;color:var(--fo-text-dim);letter-spacing:.1em;text-transform:uppercase}
+
+/* Section heading + rule */
+.fo-sec{margin-top:40px}
+.fo-sec-h{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:var(--fs-h2);margin:0 0 4px}
+.fo-sec-h .fo-ic{color:var(--fo-purple-500);font-size:1.35rem}
+.fo-rule{height:1px;background:var(--hairline-purple);margin:10px 0 20px;border:0}
+
+/* Portal card grid */
+.fo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.fo-card{position:relative;background:var(--fo-panel);border:1px solid var(--fo-line);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-card);transition:all var(--dur) var(--ease-out)}
+.fo-card:hover{border-color:var(--fo-purple-500);box-shadow:var(--glow-md)}
+.fo-card-ic{width:38px;height:38px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;background:var(--fo-purple-900);color:var(--fo-glow);margin-bottom:12px}
+.fo-card-ic .fo-ic{font-size:20px}
+.fo-card-h{font-family:var(--font-display);font-size:1.15rem;margin:0 0 6px}
+.fo-card-h a{color:var(--fo-text)!important}
+/* stretch the title link across the whole card for full-card clickability */
+.fo-card-h a::after{content:"";position:absolute;inset:0;z-index:1}
+.fo-card-h a:hover{text-decoration:none;color:var(--fo-glow)!important}
+.fo-card-p{margin:0;font-size:.85rem;color:var(--fo-text-muted);line-height:1.5}
+.fo-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;position:relative;z-index:2}
+.fo-tag{font-family:var(--font-mono);font-size:.66rem;font-weight:600;padding:3px 9px;border-radius:var(--radius-pill);background:var(--fo-purple-900);color:var(--fo-glow);border:1px solid var(--fo-purple-700)}
+
+/* Two-column: featured + recent */
+.fo-two{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-top:40px}
+.fo-panel{background:var(--fo-panel);border:1px solid var(--fo-line);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-card)}
+.fo-panel-h{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:1.2rem;margin:0 0 14px}
+.fo-panel-h .fo-ic{color:var(--fo-purple-500);font-size:1.1rem}
+.fo-feat{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--fo-line)}
+.fo-feat:last-child{border-bottom:none}
+.fo-feat-th{width:70px;height:52px;border-radius:var(--radius-sm);background:var(--gradient-purple);flex:none;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-sm);color:#fff}
+.fo-feat-th .fo-ic{font-size:22px}
+.fo-feat h4{margin:0 0 3px;font-size:1rem;color:var(--fo-text)}
+.fo-feat p{margin:0;font-size:.8rem;color:var(--fo-text-muted)}
+.fo-upd{display:flex;gap:10px;font-size:.85rem;padding:9px 0;border-bottom:1px solid var(--fo-line);align-items:baseline}
+.fo-upd:last-child{border:none}
+.fo-upd-t{font-family:var(--font-mono);font-size:.7rem;color:var(--fo-text-dim);flex:none;width:52px}
+.fo-more{display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase}
+
+/* Responsive: collapse the two-column band on narrow viewports */
+@media(max-width:800px){.fo-two{grid-template-columns:1fr}}
+
+/* --- Icon masks (Lucide, ISC-licensed; tinted via currentColor) ---------- */
+.fo-ic{display:inline-block;width:1em;height:1em;background-color:currentColor;-webkit-mask:var(--i) center/contain no-repeat;mask:var(--i) center/contain no-repeat;vertical-align:-.125em;flex:none}
+.fo-ic--book-open{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-book-open%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M12%207v14%22%20%2F%3E%20%3Cpath%20d%3D%22M3%2018a1%201%200%200%201-1-1V4a1%201%200%200%201%201-1h5a4%204%200%200%201%204%204%204%204%200%200%201%204-4h5a1%201%200%200%201%201%201v13a1%201%200%200%201-1%201h-6a3%203%200%200%200-3%203%203%203%200%200%200-3-3z%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--box{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-box%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M21%208a2%202%200%200%200-1-1.73l-7-4a2%202%200%200%200-2%200l-7%204A2%202%200%200%200%203%208v8a2%202%200%200%200%201%201.73l7%204a2%202%200%200%200%202%200l7-4A2%202%200%200%200%2021%2016Z%22%20%2F%3E%20%3Cpath%20d%3D%22m3.3%207%208.7%205%208.7-5%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2022V12%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--compass{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-compass%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22m16.24%207.76-1.804%205.411a2%202%200%200%201-1.265%201.265L7.76%2016.24l1.804-5.411a2%202%200%200%201%201.265-1.265z%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--cpu{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-cpu%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M12%2020v2%22%20%2F%3E%20%3Cpath%20d%3D%22M12%202v2%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2020v2%22%20%2F%3E%20%3Cpath%20d%3D%22M17%202v2%22%20%2F%3E%20%3Cpath%20d%3D%22M2%2012h2%22%20%2F%3E%20%3Cpath%20d%3D%22M2%2017h2%22%20%2F%3E%20%3Cpath%20d%3D%22M2%207h2%22%20%2F%3E%20%3Cpath%20d%3D%22M20%2012h2%22%20%2F%3E%20%3Cpath%20d%3D%22M20%2017h2%22%20%2F%3E%20%3Cpath%20d%3D%22M20%207h2%22%20%2F%3E%20%3Cpath%20d%3D%22M7%2020v2%22%20%2F%3E%20%3Cpath%20d%3D%22M7%202v2%22%20%2F%3E%20%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%222%22%20%2F%3E%20%3Crect%20x%3D%228%22%20y%3D%228%22%20width%3D%228%22%20height%3D%228%22%20rx%3D%221%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--factory{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-factory%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M12%2016h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M16%2016h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M3%2019a2%202%200%200%200%202%202h14a2%202%200%200%200%202-2V8.5a.5.5%200%200%200-.769-.422l-4.462%202.844A.5.5%200%200%201%2015%2010.5v-2a.5.5%200%200%200-.769-.422L9.77%2010.922A.5.5%200%200%201%209%2010.5V5a2%202%200%200%200-2-2H5a2%202%200%200%200-2%202z%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2016h.01%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--gamepad-2{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-gamepad-2%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cline%20x1%3D%226%22%20x2%3D%2210%22%20y1%3D%2211%22%20y2%3D%2211%22%20%2F%3E%20%3Cline%20x1%3D%228%22%20x2%3D%228%22%20y1%3D%229%22%20y2%3D%2213%22%20%2F%3E%20%3Cline%20x1%3D%2215%22%20x2%3D%2215.01%22%20y1%3D%2212%22%20y2%3D%2212%22%20%2F%3E%20%3Cline%20x1%3D%2218%22%20x2%3D%2218.01%22%20y1%3D%2210%22%20y2%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22M17.32%205H6.68a4%204%200%200%200-3.978%203.59c-.006.052-.01.101-.017.152C2.604%209.416%202%2014.456%202%2016a3%203%200%200%200%203%203c1%200%201.5-.5%202-1l1.414-1.414A2%202%200%200%201%209.828%2016h4.344a2%202%200%200%201%201.414.586L17%2018c.5.5%201%201%202%201a3%203%200%200%200%203-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4%204%200%200%200%2017.32%205z%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--git-branch{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-git-branch%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M15%206a9%209%200%200%200-9%209V3%22%20%2F%3E%20%3Ccircle%20cx%3D%2218%22%20cy%3D%226%22%20r%3D%223%22%20%2F%3E%20%3Ccircle%20cx%3D%226%22%20cy%3D%2218%22%20r%3D%223%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--history{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-history%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M3%2012a9%209%200%201%200%209-9%209.75%209.75%200%200%200-6.74%202.74L3%208%22%20%2F%3E%20%3Cpath%20d%3D%22M3%203v5h5%22%20%2F%3E%20%3Cpath%20d%3D%22M12%207v5l4%202%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--list{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-list%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M3%205h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M3%2012h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M3%2019h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M8%205h13%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2012h13%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2019h13%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--map{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-map%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M14.106%205.553a2%202%200%200%200%201.788%200l3.659-1.83A1%201%200%200%201%2021%204.619v12.764a1%201%200%200%201-.553.894l-4.553%202.277a2%202%200%200%201-1.788%200l-4.212-2.106a2%202%200%200%200-1.788%200l-3.659%201.83A1%201%200%200%201%203%2019.381V6.618a1%201%200%200%201%20.553-.894l4.553-2.277a2%202%200%200%201%201.788%200z%22%20%2F%3E%20%3Cpath%20d%3D%22M15%205.764v15%22%20%2F%3E%20%3Cpath%20d%3D%22M9%203.236v15%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--rocket{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-rocket%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M12%2015v5s3.03-.55%204-2c1.08-1.62%200-5%200-5%22%20%2F%3E%20%3Cpath%20d%3D%22M4.5%2016.5c-1.5%201.26-2%205-2%205s3.74-.5%205-2c.71-.84.7-2.13-.09-2.91a2.18%202.18%200%200%200-2.91-.09%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2012a22%2022%200%200%201%202-3.95A12.88%2012.88%200%200%201%2022%202c0%202.72-.78%207.5-6%2011a22.4%2022.4%200%200%201-4%202z%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2012H4s.55-3.03%202-4c1.62-1.08%205%20.05%205%20.05%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--star{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-star%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M11.525%202.295a.53.53%200%200%201%20.95%200l2.31%204.679a2.123%202.123%200%200%200%201.595%201.16l5.166.756a.53.53%200%200%201%20.294.904l-3.736%203.638a2.123%202.123%200%200%200-.611%201.878l.882%205.14a.53.53%200%200%201-.771.56l-4.618-2.428a2.122%202.122%200%200%200-1.973%200L6.396%2021.01a.53.53%200%200%201-.77-.56l.881-5.139a2.122%202.122%200%200%200-.611-1.879L2.16%209.795a.53.53%200%200%201%20.294-.906l5.165-.755a2.122%202.122%200%200%200%201.597-1.16z%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--swords{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-swords%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpolyline%20points%3D%2214.5%2017.5%203%206%203%203%206%203%2017.5%2014.5%22%20%2F%3E%20%3Cline%20x1%3D%2213%22%20x2%3D%2219%22%20y1%3D%2219%22%20y2%3D%2213%22%20%2F%3E%20%3Cline%20x1%3D%2216%22%20x2%3D%2220%22%20y1%3D%2216%22%20y2%3D%2220%22%20%2F%3E%20%3Cline%20x1%3D%2219%22%20x2%3D%2221%22%20y1%3D%2221%22%20y2%3D%2219%22%20%2F%3E%20%3Cpolyline%20points%3D%2214.5%206.5%2018%203%2021%203%2021%206%2017.5%209.5%22%20%2F%3E%20%3Cline%20x1%3D%225%22%20x2%3D%229%22%20y1%3D%2214%22%20y2%3D%2218%22%20%2F%3E%20%3Cline%20x1%3D%227%22%20x2%3D%224%22%20y1%3D%2217%22%20y2%3D%2220%22%20%2F%3E%20%3Cline%20x1%3D%223%22%20x2%3D%225%22%20y1%3D%2219%22%20y2%3D%2221%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--terminal{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-terminal%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M12%2019h8%22%20%2F%3E%20%3Cpath%20d%3D%22m4%2017%206-6-6-6%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--wrench{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-wrench%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M14.7%206.3a1%201%200%200%200%200%201.4l1.6%201.6a1%201%200%200%200%201.4%200l3.106-3.105c.32-.322.863-.22.983.218a6%206%200%200%201-8.259%207.057l-7.91%207.91a1%201%200%200%201-2.999-3l7.91-7.91a6%206%200%200%201%207.057-8.259c.438.12.54.662.219.984z%22%20%2F%3E%20%3C%2Fsvg%3E")}
+.fo-ic--zap{--i:url("data:image/svg+xml,%3Csvg%20class%3D%22lucide%20lucide-zap%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M4%2014a1%201%200%200%201-.78-1.63l9.9-10.2a.5.5%200%200%201%20.86.46l-1.92%206.02A1%201%200%200%200%2013%2010h7a1%201%200%200%201%20.78%201.63l-9.9%2010.2a.5.5%200%200%201-.86-.46l1.92-6.02A1%201%200%200%200%2011%2014z%22%20%2F%3E%20%3C%2Fsvg%3E")}

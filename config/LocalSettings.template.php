@@ -70,12 +70,28 @@ wfLoadSkin( 'Vector' );
 
 // --- Citizen configuration -------------------------------------------------
 // Config prefix is wgCitizen; see skin.json for the full list of options.
-$wgCitizenThemeDefault = "auto";   // auto | light | dark (follows the visitor's OS preference)
+$wgCitizenThemeDefault = "dark";     // the brand is dark-first (purple glow on black)
+$wgCitizenThemeColor = "#0b0a12";    // mobile browser chrome tint (design --fo-void)
 
+// --- Branding --------------------------------------------------------------
+// The Fight-command arrow glyph, deployed to /resources/fo/ by the workflow.
+$wgLogos = [
+	'icon' => '/resources/fo/logo-fight.png',
+	'1x'   => '/resources/fo/logo-fight.png',
+];
+$wgFavicon = '/resources/fo/logo-fight.png';
+
+// --- Permissions -----------------------------------------------------------
 $wgGroupPermissions['*']['edit'] = false;
 $wgGroupPermissions['*']['createaccount'] = true;
 $wgGroupPermissions['*']['createpage'] = false;
 $wgGroupPermissions['user']['edit'] = true;
 $wgGroupPermissions['user']['createpage'] = true;
+
+// Editing sitewide CSS (MediaWiki:Common.css) requires the editsitecss right,
+// which since MW 1.32 belongs to interface-admin, not sysop. This wiki manages
+// Common.css from the repo via an admin-run maintenance import, so grant it to
+// sysop. (Deliberately NOT granting editsitejs — no repo-managed sitewide JS.)
+$wgGroupPermissions['sysop']['editsitecss'] = true;
 
 $wgJobRunRate = 0;
