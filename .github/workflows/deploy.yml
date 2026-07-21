@@ -1,0 +1,116 @@
+name: Deploy MediaWiki to DreamHost
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      run_install:
+        description: "Run install.php instead of update.php (first-time setup / fresh DB only)"
+        required: false
+        default: "false"
+
+env:
+  MEDIAWIKI_VERSION: "1.43.1"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          cat >> ~/.ssh/known_hosts << 'EOF'
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC6pbLbkgiKSpd536qpYkC+G8Rr02eAhHbWRPDUWX1qBNDUHU/M2FzrTYjAi3EpGkiYOo76WLvhpks+CAni31+bluCBILB4fiqkYCOdEj+II/gJzTPvAPAUXSEhzk+Cgd2k0thuTlAqtWmUjOfisyoxe2F/ZbZwHLKDd16LZwr0lZA2zCCTVFxS3OgQ+Y/F3LQp+G+I3uMmJ5PwUNQ7ROM8IgB0+Hxi7mJmS5XH3UkeOenUN3iWYdLqCUV3Z16SbVco8v0Jt0yKqbHamToBHEidgl0W4iGSCVMwr9lcIawSUrjAJqz+s4CdNi8Oc/udoDeLi3Yzx+NIGBYW/qfTYHgWnEwm5f0+IQzOZaDz3otYfSaGRQffyagAYIQ4kkp8MmgMFFxSEoHtpmVaziOxTgpSd6q0wZIRKlalhqqn0ojjotdZm7dbxYwglxI5yGZ8q0GhM8AkjJFl4wnCXfycx2yFAeD1av0v1oCqkj5LDadEb7j67wuvGIUALpKLEoKQjFk=
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAkaYHyU1zRftfMKCccvUYej0IBpggmrPMYh3LsXilHrTqYw+lR77cGZnS80Dw/U+Hp8hpLPd5clg0pENheO3So=
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHoX0VlSRW0MPIwNPfzqzz0auG2OP0hWjAGfrjrrf1AC
+          EOF
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Download MediaWiki
+        run: |
+          curl -fLo mediawiki.tar.gz \
+            "https://releases.wikimedia.org/mediawiki/${MEDIAWIKI_VERSION%.*}/mediawiki-${MEDIAWIKI_VERSION}.tar.gz"
+          mkdir build
+          tar -xzf mediawiki.tar.gz -C build --strip-components=1
+
+      - name: Render LocalSettings.php from template
+        env:
+          WG_SITE_NAME: ${{ vars.WG_SITE_NAME || 'FIGHTORDER' }}
+          WG_SERVER: ${{ vars.WG_SERVER || 'https://fightorder.net' }}
+          WG_EMERGENCY_CONTACT: ${{ vars.WG_EMERGENCY_CONTACT || 'admin@fightorder.net' }}
+          WG_DB_HOST: ${{ secrets.WG_DB_HOST }}
+          WG_DB_NAME: ${{ secrets.WG_DB_NAME }}
+          WG_DB_USER: ${{ secrets.WG_DB_USER }}
+          WG_DB_PASSWORD: ${{ secrets.WG_DB_PASSWORD }}
+          WG_SECRET_KEY: ${{ secrets.WG_SECRET_KEY }}
+          WG_UPGRADE_KEY: ${{ secrets.WG_UPGRADE_KEY }}
+        run: |
+          sed \
+            -e "s|__WG_SITE_NAME__|${WG_SITE_NAME}|g" \
+            -e "s|__WG_SERVER__|${WG_SERVER}|g" \
+            -e "s|__WG_EMERGENCY_CONTACT__|${WG_EMERGENCY_CONTACT}|g" \
+            -e "s|__WG_DB_HOST__|${WG_DB_HOST}|g" \
+            -e "s|__WG_DB_NAME__|${WG_DB_NAME}|g" \
+            -e "s|__WG_DB_USER__|${WG_DB_USER}|g" \
+            -e "s|__WG_DB_PASSWORD__|${WG_DB_PASSWORD}|g" \
+            -e "s|__WG_SECRET_KEY__|${WG_SECRET_KEY}|g" \
+            -e "s|__WG_UPGRADE_KEY__|${WG_UPGRADE_KEY}|g" \
+            config/LocalSettings.template.php > build/LocalSettings.php
+
+      - name: Sync any local overrides / extensions / skins from repo
+        run: |
+          [ -d overrides ] && rsync -a overrides/ build/ || true
+
+      - name: Upload to DreamHost
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          sshpass -e rsync -az --delete \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            build/ "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/"
+
+      - name: Run install.php (first-time only)
+        if: ${{ github.event.inputs.run_install == 'true' }}
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          WG_SITE_NAME: ${{ vars.WG_SITE_NAME || 'FIGHTORDER' }}
+          WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
+          WG_ADMIN_PASSWORD: ${{ secrets.WG_ADMIN_PASSWORD }}
+        run: |
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" \
+            "cd '${DEPLOY_PATH}' && php maintenance/run.php install \
+              --dbserver=\$(php -r 'require \"LocalSettings.php\"; echo \$wgDBserver;') \
+              --confpath=. \
+              --dbname=\$(php -r 'require \"LocalSettings.php\"; echo \$wgDBname;') \
+              --dbuser=\$(php -r 'require \"LocalSettings.php\"; echo \$wgDBuser;') \
+              --dbpass=\$(php -r 'require \"LocalSettings.php\"; echo \$wgDBpassword;') \
+              --server=\$(php -r 'require \"LocalSettings.php\"; echo \$wgServer;') \
+              --scriptpath= \
+              --pass='${WG_ADMIN_PASSWORD}' \
+              '${WG_SITE_NAME}' '${WG_ADMIN_USER}' --overwrite=false || true"
+
+      - name: Run update.php (routine deploys)
+        if: ${{ github.event.inputs.run_install != 'true' }}
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" \
+            "cd '${DEPLOY_PATH}' && php maintenance/run.php update --quick"
