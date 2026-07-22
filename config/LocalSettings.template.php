@@ -69,6 +69,12 @@ wfLoadSkin( 'Citizen' );
 wfLoadSkin( 'Vector' );
 
 // --- Extensions ------------------------------------------------------------
+// Bundled with MediaWiki core; required for imported Spring wiki content to
+// render (its templates use {{#if:}} etc., pages use <ref> and code blocks).
+wfLoadExtension( 'ParserFunctions' );
+wfLoadExtension( 'Cite' );
+wfLoadExtension( 'SyntaxHighlight_GeSHi' );
+
 // DynamicPageList3 powers the live Recent-changes list on the Main Page via
 // {{#dpl:}} (downloaded into extensions/DynamicPageList3 by the workflow).
 wfLoadExtension( 'DynamicPageList3' );
