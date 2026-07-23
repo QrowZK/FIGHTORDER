@@ -199,3 +199,18 @@ jobs:
           }
           import_page "MediaWiki:Common.css" content/Common.css
           import_page "Main Page"            content/Main_Page.wikitext
+
+          # Brand-friendly redirects to canonical imported Spring pages.
+          if [ -f content/redirects.tsv ]; then
+            while IFS=$'\t' read -r title target; do
+              case "$title" in ''|'#'*) continue ;; esac
+              echo "Redirect '$title' -> '$target'"
+              printf '#REDIRECT [[%s]]\n' "$target" | \
+              sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+                "${SSH_USER}@${SSH_HOST}" \
+                "cd '${DEPLOY_PATH}' && php maintenance/run.php edit \
+                   --user '${WG_ADMIN_USER}' \
+                   --summary 'Brand redirect (GitHub Actions)' \
+                   '${title}'"
+            done < content/redirects.tsv
+          fi
