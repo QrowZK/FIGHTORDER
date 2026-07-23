@@ -79,6 +79,35 @@ wfLoadExtension( 'SyntaxHighlight_GeSHi' );
 // {{#dpl:}} (downloaded into extensions/DynamicPageList3 by the workflow).
 wfLoadExtension( 'DynamicPageList3' );
 
+// --- Anti-spam: CAPTCHA on account creation --------------------------------
+// ConfirmEdit + QuestyCaptcha (both bundled with core). QuestyCaptcha asks a
+// custom question only a human RTS player can answer — no external service,
+// no API keys — which stops the generic sign-up bots. Registered users skip
+// it entirely; anonymous account creation and anon link-adding are gated.
+wfLoadExtension( 'ConfirmEdit' );
+wfLoadExtension( 'ConfirmEdit/QuestyCaptcha' );
+$wgCaptchaClass = 'MediaWiki\\Extension\\ConfirmEdit\\QuestyCaptcha\\QuestyCaptcha';
+
+// Answers are matched case-insensitively; one question is chosen at random.
+$wgCaptchaQuestions = [
+	'This wiki is named after the RTS order that makes a unit move and attack anything in its path. What is that one-word command?' => [ 'fight' ],
+	'In Spring/Recoil economies, what resource do Metal Extractors pull from the ground? (one word)' => [ 'metal' ],
+	'What engine is Beyond All Reason built on? (one word)' => [ 'recoil' ],
+	'Type the number that comes after four (as a word).' => [ 'five' ],
+	'What is 3 + 4? (write the number as digits)' => [ '7' ],
+];
+
+// Only gate the actions bots abuse; never gate ordinary logged-in editing.
+$wgCaptchaTriggers['createaccount'] = true;   // the fix: sign-up needs a human
+$wgCaptchaTriggers['badlogin']      = true;   // slows credential-stuffing
+$wgCaptchaTriggers['addurl']        = true;   // anon adding external links (spam)
+$wgCaptchaTriggers['edit']          = false;
+$wgCaptchaTriggers['create']        = false;
+
+// Registered, confirmed users never see a CAPTCHA.
+$wgGroupPermissions['*']['skipcaptcha']    = false;
+$wgGroupPermissions['user']['skipcaptcha'] = true;
+
 // --- Citizen configuration -------------------------------------------------
 // Config prefix is wgCitizen; see skin.json for the full list of options.
 $wgCitizenThemeDefault = "dark";     // the brand is dark-first (purple glow on black)
