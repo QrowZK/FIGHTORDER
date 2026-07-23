@@ -25,7 +25,7 @@ jobs:
           EOF
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Push test Module + invoking page, check render, clean up
+      - name: Push test Module + invoking page, check render
         env:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}
           SSH_USER: ${{ secrets.SSH_USER }}
@@ -50,21 +50,34 @@ jobs:
           WT
 
           echo ">>> fetching rendered page"
-          $SSH "cd '${DEPLOY_PATH}' && php maintenance/run.php getText 'ScribuntoSmokeTestPage'" > /tmp/rendered_wikitext.txt || true
-          # getText gives back wikitext, not rendered HTML; use the API-equivalent via php eval isn't available — use curl from the runner instead (has real internet).
           curl -fsS "https://fightorder.net/wiki/ScribuntoSmokeTestPage" -o /tmp/rendered.html
           if grep -q "SCRIBUNTO_LIVE_TEST_OK:4" /tmp/rendered.html; then
             echo "RESULT: Scribunto executed the Lua module successfully."
           else
             echo "RESULT: Scribunto did NOT execute correctly. Page content:"
             grep -oE '<div class="mw-parser-output">.{0,400}' /tmp/rendered.html || cat /tmp/rendered.html | head -c 1000
-            EXIT=1
+            echo "SCRIBUNTO_FAILED=1" >> "$GITHUB_ENV"
           fi
 
-          echo ">>> cleaning up test pages"
-          $SSH "cd '${DEPLOY_PATH}' && php maintenance/run.php deleteBatch -u '${WG_ADMIN_USER}' -r 'diagnostic cleanup' /dev/stdin" << 'TITLES'
+      - name: Clean up test pages
+        if: always()
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
+        run: |
+          # Write titles to a real remote temp file rather than piping via
+          # /dev/stdin — deleteBatch.php failed to read /dev/stdin reliably
+          # over a non-interactive SSH session.
+          SSH="sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no ${SSH_USER}@${SSH_HOST}"
+          $SSH "cat > /tmp/zk_diag_delete_list.txt" << 'TITLES'
           Module:ScribuntoSmokeTest
           ScribuntoSmokeTestPage
           TITLES
+          $SSH "cd '${DEPLOY_PATH}' && php maintenance/run.php deleteBatch -u '${WG_ADMIN_USER}' -r 'diagnostic cleanup' /tmp/zk_diag_delete_list.txt && rm -f /tmp/zk_diag_delete_list.txt"
 
-          exit "${EXIT:-0}"
+      - name: Fail job if Scribunto didn't execute
+        if: ${{ env.SCRIBUNTO_FAILED == '1' }}
+        run: exit 1
