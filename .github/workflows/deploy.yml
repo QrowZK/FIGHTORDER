@@ -201,6 +201,7 @@ jobs:
           import_page "MediaWiki:Sidebar"     content/Sidebar.wikitext
           import_page "Main Page"             content/Main_Page.wikitext
           import_page "Spring RTS"            content/Spring_RTS.wikitext
+          import_page "Beyond All Reason"     content/Beyond_All_Reason.wikitext
 
           # Brand-friendly redirects to canonical imported Spring pages.
           if [ -f content/redirects.tsv ]; then

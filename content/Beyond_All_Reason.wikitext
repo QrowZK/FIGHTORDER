@@ -1,0 +1,34 @@
+<!-- Beyond All Reason overview page. Original content written from publicly
+     available facts about the game (beyondallreason.info), not copied text.
+     Managed in the repo at content/Beyond_All_Reason.wikitext, deployed via
+     the import_content workflow step. -->
+'''Beyond All Reason''' (commonly abbreviated '''BAR''') is a free, open-source real-time strategy game built on the [[Recoil Engine]]. It carries forward the large-scale, physically-simulated combat style of the original ''Total Annihilation'' and ''Spring RTS'' lineage: full unit and projectile simulation, deformable terrain, and battles that can scale from small skirmishes to hundreds of units per side.
+
+The game is under active, community-driven development and is free to download for Windows and Linux.
+
+== Factions ==
+BAR currently has two complete factions, with a third in development:
+
+* '''Armada''' — one of the two core playable factions.
+* '''Cortex''' — the other core playable faction.
+* '''Legion''' — a newer faction, still a work in progress.
+
+(See [[Beyond All Reason/Armada|Armada]] and [[Beyond All Reason/Cortex|Cortex]] for faction-specific pages as they're written.)
+
+== Gameplay ==
+* Terrain affects tactics directly — for example, radar cannot see through mountains, so terrain shapes scouting and ambush play.
+* Unit rosters span many classes: bots, vehicles, aircraft, ships, hovercraft, factories, and static defenses, including experimental/late-game units.
+* The economy is built around balancing resource production against unit output, the same metal/energy foundation as the Spring RTS lineage this wiki already documents (see [[Spring RTS]]).
+* Powerful late-game weapons (including nuclear weapons) can physically alter the terrain.
+
+== Getting started ==
+* The game is downloaded and played through BAR's own launcher/client from the official site.
+* Matches, replays, and leaderboards are tracked centrally, and the game includes in-client guides and a command reference.
+* The community is active on Discord, and the project is open-source on GitHub.
+
+== See also ==
+* [[Recoil Engine]] — the engine BAR is built on.
+* [[Spring RTS]] — the engine lineage BAR descends from.
+* [[Zero-K]] — another actively-developed game in the same engine family.
+
+[[Category:Games]]
