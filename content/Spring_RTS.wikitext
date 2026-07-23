@@ -13,55 +13,55 @@
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--book-open"></span>Getting Started</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=Tutorial|FAQ|Help|Playing|namespace=Main|count=50|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=Tutorial|FAQ|Help|Playing|namespace=Main|count=50|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--swords"></span>Strategy &amp; Gameplay</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=Strategy|namespace=Main|count=50|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=Strategy|namespace=Main|count=50|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--gamepad-2"></span>Games &amp; Mods</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=Games|Mods|Balanced Annihilation|Xta|Expand and Exterminate|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=Games|Mods|Balanced Annihilation|Xta|Expand and Exterminate|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--map"></span>Maps</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=Map Dev|Map making|Maps|Map Tools|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=Map Dev|Map making|Maps|Map Tools|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--box"></span>Content Development</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=Game Dev|Gamedata|3D Models|Animation|CEG|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=Game Dev|Gamedata|3D Models|Animation|CEG|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--terminal"></span>Lua Scripting</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=Lua|Libraries|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=Lua|Libraries|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--cpu"></span>AI</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=AI|AI Dev|AIWrapper|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=AI|AI Dev|AIWrapper|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--git-branch"></span>Engine &amp; Core Dev</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=Spring|Engine Dev|Development|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=Spring|Engine Dev|Development|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 
 <div class="fo-sec">
 <div class="fo-sec-h"><span class="fo-ic fo-ic--wrench"></span>Lobby &amp; Infrastructure</div>
 <hr class="fo-rule">
-<div class="fo-dpl">{{#dpl:|category=Lobby|Download Systems|Autohosts|Buildbot|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+<div class="fo-dpl">{{#dpl:|category=Lobby|Download Systems|Autohosts|Buildbot|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
 </div>
 </div>
 __NOTOC__ __NOEDITSECTION__
