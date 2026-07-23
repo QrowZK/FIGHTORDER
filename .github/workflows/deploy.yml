@@ -96,10 +96,17 @@ jobs:
           # reliable compiler access, so cross-compile a portable static
           # binary here instead: static linking means it doesn't depend on
           # whatever glibc version the server happens to run.
-          sudo apt-get install -y build-essential libreadline-dev
+          #
+          # Use the "generic" Makefile target, not "linux": the "linux" target
+          # links readline (for the interactive REPL's line editing), which
+          # pulls in termcap/ncurses symbols (tputs, tgetent, ...) that aren't
+          # available to link statically here. Scribunto only ever execs this
+          # binary non-interactively (feeds it a script, reads stdout) — no
+          # REPL, so readline support isn't needed at all.
+          sudo apt-get install -y build-essential
           curl -fLo lua.tar.gz "https://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz"
           tar -xzf lua.tar.gz
-          make -C "lua-${LUA_VERSION}" linux MYLDFLAGS="-static" CC="cc -std=gnu99"
+          make -C "lua-${LUA_VERSION}" generic MYLDFLAGS="-static" CC="cc -std=gnu99"
           "lua-${LUA_VERSION}/src/lua" -v
           file "lua-${LUA_VERSION}/src/lua" | grep -q 'statically linked' \
             && echo "confirmed: static binary" \
