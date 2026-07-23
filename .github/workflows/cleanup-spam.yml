@@ -1,0 +1,84 @@
+name: Clean up spam user pages
+
+# Deletes bot sign-up User pages and blocks the bot accounts. Manual dispatch.
+# Defaults to a DRY RUN (lists what it would do, changes nothing). Set
+# dry_run=false to actually delete + block. Re-runnable.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (list only, delete nothing). Set to false to actually delete + block."
+        required: false
+        default: "true"
+      block_users:
+        description: "Also block the bot accounts (indefinite)."
+        required: false
+        default: "true"
+
+concurrency:
+  group: deploy-dreamhost
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          cat >> ~/.ssh/known_hosts << 'EOF'
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC6pbLbkgiKSpd536qpYkC+G8Rr02eAhHbWRPDUWX1qBNDUHU/M2FzrTYjAi3EpGkiYOo76WLvhpks+CAni31+bluCBILB4fiqkYCOdEj+II/gJzTPvAPAUXSEhzk+Cgd2k0thuTlAqtWmUjOfisyoxe2F/ZbZwHLKDd16LZwr0lZA2zCCTVFxS3OgQ+Y/F3LQp+G+I3uMmJ5PwUNQ7ROM8IgB0+Hxi7mJmS5XH3UkeOenUN3iWYdLqCUV3Z16SbVco8v0Jt0yKqbHamToBHEidgl0W4iGSCVMwr9lcIawSUrjAJqz+s4CdNi8Oc/udoDeLi3Yzx+NIGBYW/qfTYHgWnEwm5f0+IQzOZaDz3otYfSaGRQffyagAYIQ4kkp8MmgMFFxSEoHtpmVaziOxTgpSd6q0wZIRKlalhqqn0ojjotdZm7dbxYwglxI5yGZ8q0GhM8AkjJFl4wnCXfycx2yFAeD1av0v1oCqkj5LDadEb7j67wuvGIUALpKLEoKQjFk=
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAkaYHyU1zRftfMKCccvUYej0IBpggmrPMYh3LsXilHrTqYw+lR77cGZnS80Dw/U+Hp8hpLPd5clg0pENheO3So=
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHoX0VlSRW0MPIwNPfzqzz0auG2OP0hWjAGfrjrrf1AC
+          EOF
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Enumerate spam user pages
+        run: |
+          python3 scripts/list_user_spam.py --out out
+          echo "== spam_pages.txt (first 20) =="; head -20 out/spam_pages.txt || true
+          echo "== counts =="; wc -l out/spam_pages.txt out/spam_users.txt || true
+
+      - name: Delete + block (dry_run=false only)
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
+          BLOCK_USERS: ${{ github.event.inputs.block_users }}
+        run: |
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" "mkdir -p ~/spam-cleanup && rm -f ~/spam-cleanup/*.txt"
+          sshpass -e rsync -az \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            out/ "${SSH_USER}@${SSH_HOST}:spam-cleanup/"
+
+          echo ">>> deleting spam user pages"
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" \
+            "cd '${DEPLOY_PATH}' && php maintenance/run.php deleteBatch \
+               -u '${WG_ADMIN_USER}' -r 'Spam: automated bot sign-up' \
+               ~/spam-cleanup/spam_pages.txt"
+
+          if [ "${BLOCK_USERS}" = "true" ]; then
+            echo ">>> blocking spam accounts (indefinite)"
+            sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+              "${SSH_USER}@${SSH_HOST}" \
+              "cd '${DEPLOY_PATH}' && php maintenance/run.php blockUsers \
+                 --performer '${WG_ADMIN_USER}' --reason 'Spam bot' --expiry infinite \
+                 ~/spam-cleanup/spam_users.txt || true"
+          fi
+
+          echo ">>> cleanup"
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" "rm -rf ~/spam-cleanup"
+          echo ">>> done"
