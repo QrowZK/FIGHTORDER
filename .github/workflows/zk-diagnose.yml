@@ -1,8 +1,9 @@
 name: Diagnose server for Scribunto (Lua) support
 
-# One-off diagnostic: checks whether the DreamHost account has a usable Lua
-# interpreter or PHP capability for Scribunto (needed to execute the Zero-K
-# wiki's Module: namespace Lua templates). Read-only, changes nothing.
+# One-off diagnostic: pushes a trivial test Module + a page invoking it via
+# {{#invoke:}}, then reports whether it executed (vs. showing a script
+# error). Confirms Scribunto + the deployed Lua binary actually work,
+# not just that the extension loaded. Cleans up both test pages after.
 
 on:
   workflow_dispatch: {}
@@ -24,24 +25,46 @@ jobs:
           EOF
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Probe Lua / exec availability
+      - name: Push test Module + invoking page, check render, clean up
         env:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
         run: |
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
-            "${SSH_USER}@${SSH_HOST}" '
-              echo "== uname =="; uname -m -s
-              echo "== which lua5.1 / lua / luajit =="
-              which lua5.1 2>/dev/null || echo "no lua5.1"
-              which lua 2>/dev/null || echo "no lua"
-              which luajit 2>/dev/null || echo "no luajit"
-              echo "== php -m (loaded modules, look for luasandbox) =="
-              php -m 2>/dev/null | grep -i lua || echo "no lua-related php module"
-              echo "== php disabled functions (need exec/proc_open for luastandalone) =="
-              php -i 2>/dev/null | grep -i "disable_functions"
-              echo "== php version =="
-              php -v 2>/dev/null | head -1
-            '
+          SSH="sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no ${SSH_USER}@${SSH_HOST}"
+
+          echo ">>> pushing Module:ScribuntoSmokeTest"
+          $SSH "cd '${DEPLOY_PATH}' && php maintenance/run.php edit --user '${WG_ADMIN_USER}' --summary 'diagnostic' 'Module:ScribuntoSmokeTest'" << 'LUA'
+          local p = {}
+          function p.hello()
+          	return "SCRIBUNTO_LIVE_TEST_OK:" .. tostring(2 + 2)
+          end
+          return p
+          LUA
+
+          echo ">>> pushing ScribuntoSmokeTestPage"
+          $SSH "cd '${DEPLOY_PATH}' && php maintenance/run.php edit --user '${WG_ADMIN_USER}' --summary 'diagnostic' 'ScribuntoSmokeTestPage'" << 'WT'
+          {{#invoke:ScribuntoSmokeTest|hello}}
+          WT
+
+          echo ">>> fetching rendered page"
+          $SSH "cd '${DEPLOY_PATH}' && php maintenance/run.php getText 'ScribuntoSmokeTestPage'" > /tmp/rendered_wikitext.txt || true
+          # getText gives back wikitext, not rendered HTML; use the API-equivalent via php eval isn't available — use curl from the runner instead (has real internet).
+          curl -fsS "https://fightorder.net/wiki/ScribuntoSmokeTestPage" -o /tmp/rendered.html
+          if grep -q "SCRIBUNTO_LIVE_TEST_OK:4" /tmp/rendered.html; then
+            echo "RESULT: Scribunto executed the Lua module successfully."
+          else
+            echo "RESULT: Scribunto did NOT execute correctly. Page content:"
+            grep -oE '<div class="mw-parser-output">.{0,400}' /tmp/rendered.html || cat /tmp/rendered.html | head -c 1000
+            EXIT=1
+          fi
+
+          echo ">>> cleaning up test pages"
+          $SSH "cd '${DEPLOY_PATH}' && php maintenance/run.php deleteBatch -u '${WG_ADMIN_USER}' -r 'diagnostic cleanup' /dev/stdin" << 'TITLES'
+          Module:ScribuntoSmokeTest
+          ScribuntoSmokeTestPage
+          TITLES
+
+          exit "${EXIT:-0}"
