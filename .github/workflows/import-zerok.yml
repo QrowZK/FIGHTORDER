@@ -1,0 +1,113 @@
+name: Import Zero-K wiki
+
+# One-off / re-runnable migration of the Zero-K wiki (zero-k.info/mediawiki,
+# CC BY-SA) into Fightorder. Manual dispatch only. Same mechanism as the
+# Spring RTS import: full-history XML export via Special:Export's GET form,
+# rsync to the server, importDump.php over SSH.
+#
+# Ten titles collide with existing Fightorder (Spring-sourced) pages —
+# generic RTS terms both communities use independently (Commander, FAQ,
+# Glossary, Units, ...). scripts/export_zerok.py disambiguates those to
+# "Title (Zero-K)" and rewrites the internal wikilinks that reference them
+# within the exported content, so nothing silently resolves to Spring's
+# unrelated same-named page. See that script for the full list/logic.
+#
+# The source wiki's own "Main Page" is excluded — content/Zero_K.wikitext (a
+# themed portal, same pattern as the other two portals) takes its place.
+#
+# IMPORTANT: run the Deploy workflow first (or push to main) so Scribunto and
+# its Lua interpreter are live — Zero-K's templates depend on Module: (Lua)
+# pages to render their infoboxes; without Scribunto they'll show as broken
+# template calls / script errors.
+
+on:
+  workflow_dispatch:
+    inputs:
+      namespaces:
+        description: "Namespaces to export (comma-sep: 0=Main 4=Zero-K 10=Template 12=Help 14=Category 828=Module)"
+        required: false
+        default: "0,4,10,12,14,828"
+      batch:
+        description: "Titles per export request"
+        required: false
+        default: "20"
+      limit:
+        description: "Cap number of titles (0 = all; use a small number for a test run first)"
+        required: false
+        default: "0"
+
+concurrency:
+  group: deploy-dreamhost
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          cat >> ~/.ssh/known_hosts << 'EOF'
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC6pbLbkgiKSpd536qpYkC+G8Rr02eAhHbWRPDUWX1qBNDUHU/M2FzrTYjAi3EpGkiYOo76WLvhpks+CAni31+bluCBILB4fiqkYCOdEj+II/gJzTPvAPAUXSEhzk+Cgd2k0thuTlAqtWmUjOfisyoxe2F/ZbZwHLKDd16LZwr0lZA2zCCTVFxS3OgQ+Y/F3LQp+G+I3uMmJ5PwUNQ7ROM8IgB0+Hxi7mJmS5XH3UkeOenUN3iWYdLqCUV3Z16SbVco8v0Jt0yKqbHamToBHEidgl0W4iGSCVMwr9lcIawSUrjAJqz+s4CdNi8Oc/udoDeLi3Yzx+NIGBYW/qfTYHgWnEwm5f0+IQzOZaDz3otYfSaGRQffyagAYIQ4kkp8MmgMFFxSEoHtpmVaziOxTgpSd6q0wZIRKlalhqqn0ojjotdZm7dbxYwglxI5yGZ8q0GhM8AkjJFl4wnCXfycx2yFAeD1av0v1oCqkj5LDadEb7j67wuvGIUALpKLEoKQjFk=
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAkaYHyU1zRftfMKCccvUYej0IBpggmrPMYh3LsXilHrTqYw+lR77cGZnS80Dw/U+Hp8hpLPd5clg0pENheO3So=
+          iad1-shared-b7-38.dreamhost.com,67.205.0.102 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHoX0VlSRW0MPIwNPfzqzz0auG2OP0hWjAGfrjrrf1AC
+          EOF
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Export Zero-K wiki (full history)
+        run: |
+          python3 scripts/export_zerok.py \
+            --out dump \
+            --namespaces "${{ github.event.inputs.namespaces }}" \
+            --batch "${{ github.event.inputs.batch }}" \
+            --limit "${{ github.event.inputs.limit }}"
+          echo "Batch files:"; ls -la dump/
+          echo "Total pages / revisions across all batches:"
+          grep -o '<page>' dump/*.xml | wc -l
+          grep -o '<revision>' dump/*.xml | wc -l
+
+      - name: Upload dumps + import script to server
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          # Stage the XML outside the docroot so it is never web-served.
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" "mkdir -p ~/zerok-import && rm -f ~/zerok-import/*.xml"
+          cp scripts/import_remote.sh dump/import_remote.sh
+          sshpass -e rsync -az \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            dump/ "${SSH_USER}@${SSH_HOST}:zerok-import/"
+
+      - name: Import into Fightorder
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" \
+            "bash ~/zerok-import/import_remote.sh '${DEPLOY_PATH}' zerok-import"
+
+      - name: Push Zero-K portal page
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
+        run: |
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" \
+            "cd '${DEPLOY_PATH}' && php maintenance/run.php edit \
+               --user '${WG_ADMIN_USER}' \
+               --summary 'Deploy Zero-K portal (GitHub Actions)' \
+               'Zero-K'" < content/Zero_K.wikitext

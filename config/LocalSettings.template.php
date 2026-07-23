@@ -79,6 +79,25 @@ wfLoadExtension( 'SyntaxHighlight_GeSHi' );
 // {{#dpl:}} (downloaded into extensions/DynamicPageList3 by the workflow).
 wfLoadExtension( 'DynamicPageList3' );
 
+// Bundled with core; used by imported Zero-K wiki content (category browsing,
+// clickable map images, inline search boxes in templates).
+wfLoadExtension( 'CategoryTree' );
+wfLoadExtension( 'ImageMap' );
+wfLoadExtension( 'InputBox' );
+
+// Scribunto: executes the Lua modules (Module: namespace) that back the
+// imported Zero-K wiki's infobox/formatting templates (downloaded into
+// extensions/Scribunto by the workflow). Needs an actual Lua interpreter —
+// the DreamHost account has none installed and no compiler access reliable
+// enough to build one there, so the deploy workflow cross-compiles a static
+// Lua 5.1.5 binary on the runner (portable across glibc versions since it's
+// statically linked) and ships it to ~/lua-bin/lua5.1, OUTSIDE the web docroot
+// so it's never web-servable. LocalSettings.php lives at the docroot root, so
+// dirname(__DIR__) is the account's home directory.
+wfLoadExtension( 'Scribunto' );
+$wgScribuntoDefaultEngine = 'luastandalone';
+$wgScribuntoEngineConf['luastandalone']['luaPath'] = dirname( __DIR__ ) . '/lua-bin/lua5.1';
+
 // --- Anti-spam: CAPTCHA on account creation --------------------------------
 // ConfirmEdit + QuestyCaptcha (both bundled with core). QuestyCaptcha asks a
 // custom question only a human RTS player can answer — no external service,

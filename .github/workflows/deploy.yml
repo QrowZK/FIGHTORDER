@@ -26,6 +26,11 @@ env:
   CITIZEN_VERSION: "3.18.0"
   # DynamicPageList3 branch (tracks a MediaWiki REL branch; REL1_43 needs >= 1.43.0).
   DPL3_REF: "REL1_43"
+  # Scribunto branch (tracks a MediaWiki REL branch; REL1_43 needs >= 1.43).
+  SCRIBUNTO_REF: "REL1_43"
+  # Lua source version to statically compile for Scribunto's LuaStandalone
+  # engine (matches what Scribunto historically bundled/tested against).
+  LUA_VERSION: "5.1.5"
 
 jobs:
   deploy:
@@ -74,6 +79,35 @@ jobs:
           tar -xzf dpl3.tar.gz -C build/extensions/DynamicPageList3 --strip-components=1
           test -f build/extensions/DynamicPageList3/extension.json
 
+      - name: Download Scribunto extension
+        run: |
+          # Executes the Lua modules backing the imported Zero-K wiki's
+          # templates. Needs a Lua interpreter at runtime (built below) — the
+          # extension itself ships ready to run.
+          curl -fLo scribunto.tar.gz \
+            "https://github.com/wikimedia/mediawiki-extensions-Scribunto/archive/refs/heads/${SCRIBUNTO_REF}.tar.gz"
+          mkdir -p build/extensions/Scribunto
+          tar -xzf scribunto.tar.gz -C build/extensions/Scribunto --strip-components=1
+          test -f build/extensions/Scribunto/extension.json
+
+      - name: Build static Lua interpreter for Scribunto
+        run: |
+          # DreamHost shared hosting has no lua5.1/lua/luajit installed and no
+          # reliable compiler access, so cross-compile a portable static
+          # binary here instead: static linking means it doesn't depend on
+          # whatever glibc version the server happens to run.
+          sudo apt-get install -y build-essential libreadline-dev
+          curl -fLo lua.tar.gz "https://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz"
+          tar -xzf lua.tar.gz
+          make -C "lua-${LUA_VERSION}" linux MYLDFLAGS="-static" CC="cc -std=gnu99"
+          "lua-${LUA_VERSION}/src/lua" -v
+          file "lua-${LUA_VERSION}/src/lua" | grep -q 'statically linked' \
+            && echo "confirmed: static binary" \
+            || { echo "ERROR: lua binary is not statically linked"; file "lua-${LUA_VERSION}/src/lua"; exit 1; }
+          mkdir -p lua-bin
+          cp "lua-${LUA_VERSION}/src/lua" lua-bin/lua5.1
+          chmod 755 lua-bin/lua5.1
+
       - name: Render LocalSettings.php from template
         env:
           WG_SITE_NAME: ${{ vars.WG_SITE_NAME || 'FIGHTORDER' }}
@@ -120,6 +154,24 @@ jobs:
             --exclude='LocalSettings.php.deployed' \
             -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
             build/ "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/"
+
+      - name: Deploy static Lua interpreter (outside the web docroot)
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          # LocalSettings.php points Scribunto at dirname(__DIR__)/lua-bin —
+          # a sibling of the docroot, so it's never web-servable.
+          LUA_DIR="$(dirname "${DEPLOY_PATH}")/lua-bin"
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" "mkdir -p '${LUA_DIR}'"
+          sshpass -e rsync -az \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            lua-bin/lua5.1 "${SSH_USER}@${SSH_HOST}:${LUA_DIR}/lua5.1"
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" "chmod 755 '${LUA_DIR}/lua5.1' && '${LUA_DIR}/lua5.1' -v"
 
       - name: Run install.php against fresh DB, then restore our config (first-time only)
         if: ${{ github.event.inputs.run_install == 'true' }}

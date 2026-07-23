@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
-# Runs ON the DreamHost server. Imports every staged Spring XML dump, then
-# rebuilds link/category tables and site statistics. Re-runnable: importDump
-# skips revisions that already exist.
+# Runs ON the DreamHost server. Imports every staged XML dump from a given
+# staging directory under $HOME, then rebuilds link/category tables and
+# site statistics. Re-runnable: importDump skips revisions that already
+# exist. Shared by the Spring and Zero-K (and any future) wiki imports.
 #
-# $1 = MediaWiki install path (docroot). Dumps live in ~/spring-import/.
+# $1 = MediaWiki install path (docroot).
+# $2 = staging directory name under $HOME (default: spring-import, for
+#      backwards compatibility with the existing Spring import workflow).
 set -euo pipefail
 
 DP="$1"
+STAGE_DIR="${2:-spring-import}"
 cd "$DP"
 
 shopt -s nullglob
-files=( "${HOME}"/spring-import/*.xml )
+files=( "${HOME}/${STAGE_DIR}"/*.xml )
 if [ ${#files[@]} -eq 0 ]; then
-  echo "No dump files found in ~/spring-import/ — nothing to import." >&2
+  echo "No dump files found in ~/${STAGE_DIR}/ — nothing to import." >&2
   exit 1
 fi
 
@@ -28,6 +32,6 @@ echo ">>> updating site statistics"
 php maintenance/run.php initSiteStats --update || true
 
 echo ">>> cleaning up staged dumps"
-rm -rf "${HOME}/spring-import"
+rm -rf "${HOME}/${STAGE_DIR}"
 
 echo ">>> done"

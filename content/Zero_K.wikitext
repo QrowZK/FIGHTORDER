@@ -1,0 +1,54 @@
+<!-- Zero-K portal. Managed in the repo at content/Zero_K.wikitext and deployed
+     via .github/workflows/import-zerok.yml. Same DPL-driven pattern as the
+     Spring RTS and Recoil Engine portals — self-updating as pages are added
+     or recategorized. Styling is in MediaWiki:Common.css. -->
+<div class="fo-main">
+<div class="fo-hero fo-hero--sub">
+<h1>Zero-K</h1>
+<p>Open-source RTS with physics-driven combat, unrestricted unit building, and deep commander customization — built on the Spring/Recoil engine lineage. Content below is imported verbatim from the [https://zero-k.info/mediawiki official Zero-K wiki] (CC BY-SA).</p>
+<div class="fo-cta"><span class="fo-btn fo-btn--s"><span class="fo-ic fo-ic--gamepad-2"></span>[https://zero-k.info Zero-K official site]</span><span class="fo-btn fo-btn--s"><span class="fo-ic fo-ic--list"></span>[[Special:Categories|All categories]]</span></div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--book-open"></span>Manual &amp; Commands</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Manual|Commands|Mission Editor|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--swords"></span>Units</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Units|Riots|Raiders|Assaults|Skirmishers|Artillery|Anti-Air|Scouts|Bombs|Constructors|namespace=Main|count=200|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--box"></span>Buildings</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Buildings|namespace=Main|count=100|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--zap"></span>Economy</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Energy|Resources|namespace=Main|count=50|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--map"></span>PlanetWars</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=PlanetWars|namespace=Main|count=50|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--wrench"></span>Modding &amp; Templates</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Development|Lua|Lua-based templates|Infobox templates|Layout templates|ZK Infoboxes|namespace=Main|count=80|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--history"></span>Community Discussion</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Cold Takes|namespace=Main|count=50|ordermethod=title|order=ascending|noresultsheader=<span class="fo-dim">No pages yet.</span>|noresultsfooter=}}</div>
+</div>
+</div>
+__NOTOC__ __NOEDITSECTION__
