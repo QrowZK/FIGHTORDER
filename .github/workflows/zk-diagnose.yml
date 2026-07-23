@@ -33,7 +33,7 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
         run: |
-          SSH="sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no ${SSH_USER}@${SSH_HOST}"
+          SSH="sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 ${SSH_USER}@${SSH_HOST}"
 
           echo ">>> pushing Module:ScribuntoSmokeTest"
           $SSH "cd '${DEPLOY_PATH}' && php maintenance/run.php edit --user '${WG_ADMIN_USER}' --summary 'diagnostic' 'Module:ScribuntoSmokeTest'" << 'LUA'
@@ -71,7 +71,7 @@ jobs:
           # Write titles to a real remote temp file rather than piping via
           # /dev/stdin — deleteBatch.php failed to read /dev/stdin reliably
           # over a non-interactive SSH session.
-          SSH="sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no ${SSH_USER}@${SSH_HOST}"
+          SSH="sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 ${SSH_USER}@${SSH_HOST}"
           $SSH "cat > /tmp/zk_diag_delete_list.txt" << 'TITLES'
           Module:ScribuntoSmokeTest
           ScribuntoSmokeTestPage

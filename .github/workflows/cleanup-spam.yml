@@ -56,14 +56,14 @@ jobs:
           WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
           BLOCK_USERS: ${{ github.event.inputs.block_users }}
         run: |
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" "mkdir -p ~/spam-cleanup && rm -f ~/spam-cleanup/*.txt"
           sshpass -e rsync -az \
-            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
             out/ "${SSH_USER}@${SSH_HOST}:spam-cleanup/"
 
           echo ">>> deleting spam user pages"
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" \
             "cd '${DEPLOY_PATH}' && php maintenance/run.php deleteBatch \
                -u '${WG_ADMIN_USER}' -r 'Spam: automated bot sign-up' \
@@ -71,7 +71,7 @@ jobs:
 
           if [ "${BLOCK_USERS}" = "true" ]; then
             echo ">>> blocking spam accounts (indefinite)"
-            sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
               "${SSH_USER}@${SSH_HOST}" \
               "cd '${DEPLOY_PATH}' && php maintenance/run.php blockUsers \
                  --performer '${WG_ADMIN_USER}' --reason 'Spam bot' --expiry infinite \
@@ -79,6 +79,6 @@ jobs:
           fi
 
           echo ">>> cleanup"
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" "rm -rf ~/spam-cleanup"
           echo ">>> done"

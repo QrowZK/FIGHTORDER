@@ -79,11 +79,11 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           # Stage the XML outside the docroot so it is never web-served.
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" "mkdir -p ~/zerok-import && rm -f ~/zerok-import/*.xml"
           cp scripts/import_remote.sh dump/import_remote.sh
           sshpass -e rsync -az \
-            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
             dump/ "${SSH_USER}@${SSH_HOST}:zerok-import/"
 
       - name: Import into Fightorder
@@ -93,7 +93,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" \
             "bash ~/zerok-import/import_remote.sh '${DEPLOY_PATH}' zerok-import"
 
@@ -105,7 +105,7 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
         run: |
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" \
             "cd '${DEPLOY_PATH}' && php maintenance/run.php edit \
                --user '${WG_ADMIN_USER}' \

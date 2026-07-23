@@ -159,7 +159,7 @@ jobs:
             --exclude='/images/' \
             --exclude='/cache/' \
             --exclude='LocalSettings.php.deployed' \
-            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
             build/ "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/"
 
       - name: Deploy static Lua interpreter (outside the web docroot)
@@ -172,12 +172,12 @@ jobs:
           # LocalSettings.php points Scribunto at dirname(__DIR__)/lua-bin —
           # a sibling of the docroot, so it's never web-servable.
           LUA_DIR="$(dirname "${DEPLOY_PATH}")/lua-bin"
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" "mkdir -p '${LUA_DIR}'"
           sshpass -e rsync -az \
-            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
             lua-bin/lua5.1 "${SSH_USER}@${SSH_HOST}:${LUA_DIR}/lua5.1"
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" "chmod 755 '${LUA_DIR}/lua5.1' && '${LUA_DIR}/lua5.1' -v"
 
       - name: Run install.php against fresh DB, then restore our config (first-time only)
@@ -203,7 +203,7 @@ jobs:
           # LocalSettings.php is already present. So: move our deployed
           # config aside, let install.php build the schema + admin account
           # using its own throwaway config, then put our real config back.
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" \
             "cd '${DEPLOY_PATH}' && \
              mv LocalSettings.php LocalSettings.php.deployed && \
@@ -229,7 +229,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" \
             "cd '${DEPLOY_PATH}' && php maintenance/run.php update --quick"
 
@@ -249,7 +249,7 @@ jobs:
           import_page () {
             local title="$1" file="$2"
             echo "Importing '$title' from $file ..."
-            sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
               "${SSH_USER}@${SSH_HOST}" \
               "cd '${DEPLOY_PATH}' && php maintenance/run.php edit \
                  --user '${WG_ADMIN_USER}' \
@@ -268,7 +268,7 @@ jobs:
               case "$title" in ''|'#'*) continue ;; esac
               echo "Redirect '$title' -> '$target'"
               printf '#REDIRECT [[%s]]\n' "$target" | \
-              sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+              sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
                 "${SSH_USER}@${SSH_HOST}" \
                 "cd '${DEPLOY_PATH}' && php maintenance/run.php edit \
                    --user '${WG_ADMIN_USER}' \
@@ -280,6 +280,6 @@ jobs:
           # Collapse any double redirects created by pointing brand titles at
           # pages that are themselves redirects.
           echo "Fixing double redirects ..."
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" \
             "cd '${DEPLOY_PATH}' && php maintenance/run.php fixDoubleRedirects --fix || true"

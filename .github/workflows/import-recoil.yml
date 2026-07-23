@@ -57,7 +57,7 @@ jobs:
         run: |
           while IFS=$'\t' read -r title file; do
             echo "Importing '${title}' ..."
-            sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
               "${SSH_USER}@${SSH_HOST}" \
               "cd '${DEPLOY_PATH}' && php maintenance/run.php edit \
                  --user '${WG_ADMIN_USER}' \
@@ -73,7 +73,7 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           WG_ADMIN_USER: ${{ secrets.WG_ADMIN_USER }}
         run: |
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" \
             "cd '${DEPLOY_PATH}' && php maintenance/run.php edit \
                --user '${WG_ADMIN_USER}' \

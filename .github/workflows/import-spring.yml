@@ -70,11 +70,11 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           # Stage the XML outside the docroot so it is never web-served.
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" "mkdir -p ~/spring-import && rm -f ~/spring-import/*.xml"
           cp scripts/import_remote.sh dump/import_remote.sh
           sshpass -e rsync -az \
-            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no" \
+            -e "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
             dump/ "${SSH_USER}@${SSH_HOST}:spring-import/"
 
       - name: Import into Fightorder
@@ -84,6 +84,6 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${SSH_USER}@${SSH_HOST}" \
             "bash ~/spring-import/import_remote.sh '${DEPLOY_PATH}'"
