@@ -198,7 +198,9 @@ jobs:
                  '${title}'" < "$file"
           }
           import_page "MediaWiki:Common.css" content/Common.css
-          import_page "Main Page"            content/Main_Page.wikitext
+          import_page "MediaWiki:Sidebar"     content/Sidebar.wikitext
+          import_page "Main Page"             content/Main_Page.wikitext
+          import_page "Spring RTS"            content/Spring_RTS.wikitext
 
           # Brand-friendly redirects to canonical imported Spring pages.
           if [ -f content/redirects.tsv ]; then
@@ -214,3 +216,10 @@ jobs:
                    '${title}'"
             done < content/redirects.tsv
           fi
+
+          # Collapse any double redirects created by pointing brand titles at
+          # pages that are themselves redirects.
+          echo "Fixing double redirects ..."
+          sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+            "${SSH_USER}@${SSH_HOST}" \
+            "cd '${DEPLOY_PATH}' && php maintenance/run.php fixDoubleRedirects --fix || true"

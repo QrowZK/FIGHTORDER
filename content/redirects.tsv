@@ -1,7 +1,6 @@
 # Brand-friendly titles that redirect to the canonical imported Spring pages.
 # Format: <redirect title><TAB><target title>. Applied by the import_content
 # workflow step. Add rows here as more landing pages are identified.
-Spring RTS	Spring
 Lua API	Lua:Main
 Commands	Command Reference
-Modding	Mod and Unit development
+Modding	Gamedev:Main

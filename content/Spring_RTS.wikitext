@@ -1,0 +1,67 @@
+<!-- Spring RTS portal. Managed in the repo at content/Spring_RTS.wikitext and
+     deployed via GitHub Actions (workflow_dispatch -> import_content=true).
+     Each section lists its category members live via DynamicPageList3, so the
+     portal reorganizes itself as pages are (re)categorized. Styling is in
+     MediaWiki:Common.css (.fo-* classes). -->
+<div class="fo-main">
+<div class="fo-hero fo-hero--sub">
+<h1>Spring RTS</h1>
+<p>The original <strong>Spring</strong> engine knowledge base — {{NUMBEROFARTICLES}} articles on strategy, games, maps, modding, Lua, AI, and engine internals, imported and preserved from the Spring wiki. Every section below is built live from the wiki's categories.</p>
+<div class="fo-cta"><span class="fo-btn fo-btn--s"><span class="fo-ic fo-ic--list"></span>[[Special:Categories|All categories]]</span><span class="fo-btn fo-btn--s"><span class="fo-ic fo-ic--history"></span>[[Special:RecentChanges|Recent changes]]</span></div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--book-open"></span>Getting Started</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Tutorial|FAQ|Help|Playing|namespace=Main|count=50|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--swords"></span>Strategy &amp; Gameplay</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Strategy|namespace=Main|count=50|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--gamepad-2"></span>Games &amp; Mods</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Games|Mods|Balanced Annihilation|Xta|Expand and Exterminate|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--map"></span>Maps</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Map Dev|Map making|Maps|Map Tools|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--box"></span>Content Development</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Game Dev|Gamedata|3D Models|Animation|CEG|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--terminal"></span>Lua Scripting</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Lua|Libraries|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--cpu"></span>AI</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=AI|AI Dev|AIWrapper|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--git-branch"></span>Engine &amp; Core Dev</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Spring|Engine Dev|Development|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+
+<div class="fo-sec">
+<div class="fo-sec-h"><span class="fo-ic fo-ic--wrench"></span>Lobby &amp; Infrastructure</div>
+<hr class="fo-rule">
+<div class="fo-dpl">{{#dpl:|category=Lobby|Download Systems|Autohosts|Buildbot|namespace=Main|count=80|ordermethod=title|order=ascending|mode=userformat|listseparators=,<div class="fo-dpl-item">,</div>,|noresultsheader=<span class="fo-dim">No pages yet.</span>}}</div>
+</div>
+</div>
+__NOTOC__ __NOEDITSECTION__

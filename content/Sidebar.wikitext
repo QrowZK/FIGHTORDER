@@ -1,0 +1,23 @@
+# MediaWiki:Sidebar — Citizen reads this for the left navigation on every page.
+# Managed in the repo (content/Sidebar.wikitext), deployed via import_content.
+* navigation
+** Main Page|Home
+** Spring RTS|Spring RTS
+** Special:RecentChanges|Recent changes
+** Special:Random|Random page
+** Special:Categories|All categories
+
+* Spring RTS
+** Spring RTS|Portal home
+** Category:Tutorial|Getting started
+** Category:Strategy|Strategy &amp; gameplay
+** Category:Mods|Games &amp; mods
+** Category:Map Dev|Maps
+** Category:Game Dev|Content development
+** Category:Lua|Lua scripting
+** Category:AI|AI
+** Category:Spring|Engine &amp; core
+** Category:Lobby|Lobby &amp; infrastructure
+
+* SEARCH
+* TOOLBOX
