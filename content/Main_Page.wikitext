@@ -13,21 +13,23 @@
 <div class="fo-two">
 <div class="fo-panel">
 <div class="fo-panel-h"><span class="fo-ic fo-ic--star"></span>Featured articles</div>
-<div class="fo-feat"><div class="fo-feat-th"><span class="fo-ic fo-ic--swords"></span></div><div><h4>[[Fight|The Fight command]]</h4><p>Move-and-engage: how attack-move differs from raw move, and when to queue it.</p></div></div>
-<div class="fo-feat"><div class="fo-feat-th"><span class="fo-ic fo-ic--zap"></span></div><div><h4>[[Commander|D-gun & commander play]]</h4><p>Timing the disintegrator, avoiding com-drops, and reclaim micro.</p></div></div>
-<div class="fo-feat"><div class="fo-feat-th"><span class="fo-ic fo-ic--factory"></span></div><div><h4>[[Economy|Economy fundamentals]]</h4><p>Metal vs energy, overdrive, and expanding without stalling.</p></div></div>
+<div class="fo-feat"><div class="fo-feat-th"><span class="fo-ic fo-ic--book-open"></span></div><div><h4>[[The Complete Guide To Making A Spring Game]]</h4><p>A full walkthrough of building a game from scratch on the engine — structure, content, and pitfalls.</p></div></div>
+<div class="fo-feat"><div class="fo-feat-th"><span class="fo-ic fo-ic--box"></span></div><div><h4>[[Gamedev:UnitDefs|Unit definitions reference]]</h4><p>The complete UnitDef field reference — every property that defines how a unit behaves.</p></div></div>
+<div class="fo-feat"><div class="fo-feat-th"><span class="fo-ic fo-ic--zap"></span></div><div><h4>[[Engine Profiling]]</h4><p>Finding and diagnosing performance bottlenecks in engine and game code.</p></div></div>
 </div>
 <div class="fo-panel">
 <div class="fo-panel-h"><span class="fo-ic fo-ic--history"></span>Recent changes</div>
+<div class="fo-recent">
 {{#dpl:
 |namespace=Main
 |ordermethod=lastedit
 |order=descending
 |count=7
-|mode=userformat
-|noresultsheader=<div class="fo-upd"><span class="fo-upd-t">wiki</span><div>No edits yet — start writing the wiki!</div></div>
-|listseparators=,<div class="fo-upd"><span class="fo-upd-t">edit</span><div>,</div></div>,
+|addeditdate=true
+|noresultsheader=<span class="fo-dim">No edits yet — start writing the wiki!</span>
+|noresultsfooter=
 }}
+</div>
 <span class="fo-more">[[Special:RecentChanges|→ See all recent changes]]</span>
 </div>
 </div>
