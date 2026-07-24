@@ -140,6 +140,11 @@ $wgLogos = [
 ];
 $wgFavicon = '/resources/fo/logo-fight.png';
 
+// Allows raw <img> tags in wikitext (default off — Sanitizer otherwise
+// HTML-escapes them into literal visible text). Needed for the game/engine
+// logo images referenced by path on the Main Page cards.
+$wgAllowImageTag = true;
+
 // --- Permissions -----------------------------------------------------------
 $wgGroupPermissions['*']['edit'] = false;
 $wgGroupPermissions['*']['createaccount'] = true;
