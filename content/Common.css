@@ -143,7 +143,7 @@
 .fo-card-ic.fo-logo{background-color:transparent;background-size:contain;background-position:center;background-repeat:no-repeat;padding:0}
 .fo-logo-zerok{background-image:url(/resources/fo/logo-zerok.png)}
 .fo-logo-bar{background-image:url(/resources/fo/logo-bar.png)}
-.fo-logo-recoil{background-image:url(/resources/fo/logo-recoil.svg)}
+.fo-logo-recoil{background-image:url(/resources/fo/logo-recoil.svg);filter:invert(1)}
 .fo-logo-spring{background-image:url(/resources/fo/logo-spring.png);border-radius:var(--radius-md)}
 
 /* --- Icon masks (Lucide, ISC-licensed; tinted via currentColor) ---------- */
