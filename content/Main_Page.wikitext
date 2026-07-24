@@ -37,8 +37,8 @@
 <div class="fo-sec-h"><span class="fo-ic fo-ic--gamepad-2"></span>Games</div>
 <hr class="fo-rule">
 <div class="fo-grid">
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--gamepad-2"></span></div><div class="fo-card-h">[[Zero-K]]</div><p class="fo-card-p">Open-source RTS with physics projectiles, no unit build limits, and deep commander customization.</p></div>
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--swords"></span></div><div class="fo-card-h">[[Beyond All Reason]]</div><p class="fo-card-p">BAR — large-scale modern RTS on the Recoil engine, free and community-driven.</p></div>
+<div class="fo-card"><div class="fo-card-ic"><img src="/resources/fo/logo-zerok.png" alt="Zero-K"></div><div class="fo-card-h">[[Zero-K]]</div><p class="fo-card-p">Open-source RTS with physics projectiles, no unit build limits, and deep commander customization.</p></div>
+<div class="fo-card"><div class="fo-card-ic"><img src="/resources/fo/logo-bar.png" alt="Beyond All Reason"></div><div class="fo-card-h">[[Beyond All Reason]]</div><p class="fo-card-p">BAR — large-scale modern RTS on the Recoil engine, free and community-driven.</p></div>
 <div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--box"></span></div><div class="fo-card-h">[[NOTA]]</div><p class="fo-card-p">None Of The Above — a tightly-balanced annihilation-style total conversion.</p></div>
 <div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--terminal"></span></div><div class="fo-card-h">[[Kernel Panic]]</div><p class="fo-card-p">Minimalist computer-themed RTS — three sides, no economy, pure tactics.</p></div>
 </div>
@@ -47,8 +47,8 @@
 <div class="fo-sec-h"><span class="fo-ic fo-ic--cpu"></span>Engines</div>
 <hr class="fo-rule">
 <div class="fo-grid">
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--cpu"></span></div><div class="fo-card-h">[[Recoil Engine]]</div><p class="fo-card-p">The actively-developed fork powering Beyond All Reason and modern titles.</p></div>
-<div class="fo-card"><div class="fo-card-ic"><span class="fo-ic fo-ic--git-branch"></span></div><div class="fo-card-h">[[Spring RTS]]</div><p class="fo-card-p">The original engine and the heritage this wiki is preserving.</p></div>
+<div class="fo-card"><div class="fo-card-ic"><img src="/resources/fo/logo-recoil.svg" alt="Recoil Engine"></div><div class="fo-card-h">[[Recoil Engine]]</div><p class="fo-card-p">The actively-developed fork powering Beyond All Reason and modern titles.</p></div>
+<div class="fo-card"><div class="fo-card-ic"><img src="/resources/fo/logo-spring.png" alt="Spring RTS"></div><div class="fo-card-h">[[Spring RTS]]</div><p class="fo-card-p">The original engine and the heritage this wiki is preserving.</p></div>
 </div>
 </div>
 </div>
