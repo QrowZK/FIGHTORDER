@@ -140,7 +140,11 @@
 .fo-recent li a{color:var(--fo-glow)}
 .fo-recent li a:hover{color:var(--fo-purple-400)}
 
-.fo-card-ic img{width:22px;height:22px;object-fit:contain;border-radius:4px}
+.fo-card-ic.fo-logo{background-color:transparent;background-size:contain;background-position:center;background-repeat:no-repeat;padding:0}
+.fo-logo-zerok{background-image:url(/resources/fo/logo-zerok.png)}
+.fo-logo-bar{background-image:url(/resources/fo/logo-bar.png)}
+.fo-logo-recoil{background-image:url(/resources/fo/logo-recoil.svg)}
+.fo-logo-spring{background-image:url(/resources/fo/logo-spring.png);border-radius:var(--radius-md)}
 
 /* --- Icon masks (Lucide, ISC-licensed; tinted via currentColor) ---------- */
 .fo-ic{display:inline-block;width:1em;height:1em;background-color:currentColor;-webkit-mask:var(--i) center/contain no-repeat;mask:var(--i) center/contain no-repeat;vertical-align:-.125em;flex:none}
