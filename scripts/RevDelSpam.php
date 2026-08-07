@@ -54,7 +54,11 @@ class RevDelSpam extends Maintenance {
 		$context = RequestContext::getMain();
 		$context->setUser( $performer );
 
-		$list = new RevDelRevisionList( $context, $title, $ids );
+		// RevDelRevisionList takes several injected services (LBFactory,
+		// HookContainer, HtmlCacheUpdater, RevisionStore) beyond context/
+		// page/ids — RevisionDeleter::createList() is the stable factory
+		// SpecialRevisionDelete itself uses to wire those up correctly.
+		$list = RevisionDeleter::createList( 'revision', $context, $title, $ids );
 
 		$status = $list->setVisibility( [
 			'value' => [
