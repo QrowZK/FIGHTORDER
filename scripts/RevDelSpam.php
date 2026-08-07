@@ -13,7 +13,10 @@
 
 use MediaWiki\Revision\RevisionRecord;
 
-require_once dirname( __DIR__ ) . '/maintenance/Maintenance.php';
+// Run via `php maintenance/run.php <path>/RevDelSpam.php` — the runner
+// autoloads the Maintenance base class before including this file, so no
+// manual require is needed (and none would resolve correctly anyway,
+// since this script lives outside the install tree).
 
 class RevDelSpam extends Maintenance {
 	public function __construct() {
